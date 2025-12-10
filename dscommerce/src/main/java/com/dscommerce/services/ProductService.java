@@ -4,6 +4,7 @@ import com.dscommerce.dto.ProductDTO;
 import com.dscommerce.entities.Product;
 import com.dscommerce.repositories.ProductRepository;
 import com.dscommerce.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,5 +48,19 @@ public class ProductService {
         entity.setDescription(dto.getDescription());
         entity.setPrice(dto.getPrice());
         entity.setImgUrl(dto.getImgUrl());
+    }
+
+    @Transactional
+    public ProductDTO update(Long id, ProductDTO dto) {
+        try {
+            Product entity = productRepository.getReferenceById(id);
+            System.out.println("SERVICE(after getRef) -> DTO: " + dto + " and entity: " + entity );
+            dtoToEntity(dto, entity);
+            System.out.println("SERVICE(after dtoToEntity) -> DTO: " + dto + " and entity: " + entity );
+            entity = productRepository.save(entity);
+            return new ProductDTO(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Resource not found for id: " + id);
+        }
     }
 }
