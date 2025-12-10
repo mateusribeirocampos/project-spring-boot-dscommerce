@@ -32,4 +32,20 @@ public class ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found for id: " + id));
         return new ProductDTO(product);
     }
+
+    @Transactional
+    public ProductDTO insert(ProductDTO dto) {
+        Product entity = new Product();
+
+        dtoToEntity(dto, entity);
+        entity = productRepository.save(entity);
+        return new ProductDTO(entity);
+    }
+
+    private void dtoToEntity(ProductDTO dto, Product entity) {
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setPrice(dto.getPrice());
+        entity.setImgUrl(dto.getImgUrl());
+    }
 }
