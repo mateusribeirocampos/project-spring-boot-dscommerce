@@ -3,6 +3,7 @@ package com.dscommerce.controllers;
 import com.dscommerce.dto.ProductDTO;
 import com.dscommerce.entities.Product;
 import com.dscommerce.services.ProductService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductDTO> insert(@RequestBody ProductDTO dto) {
+    public ResponseEntity<ProductDTO> insert(@Valid @RequestBody ProductDTO dto) {
         logger.info("POST /products - creating a product {}", dto.getName());
         dto = productService.insert(dto);
         URI uri = ServletUriComponentsBuilder
@@ -52,7 +53,8 @@ public class ProductController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO dto) {
+    public ResponseEntity<ProductDTO> update(@PathVariable Long id,
+                                             @Valid @RequestBody ProductDTO dto) {
         logger.info("PUT /products/{} - updating product {} by id", id, dto.getName());
         dto = productService.update(id, dto);
         System.out.println("Controller layer: dto: " + dto.getName());

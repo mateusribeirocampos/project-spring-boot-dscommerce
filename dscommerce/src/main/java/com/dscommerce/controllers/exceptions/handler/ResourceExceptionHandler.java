@@ -1,12 +1,14 @@
 package com.dscommerce.controllers.exceptions.handler;
 
 import com.dscommerce.controllers.exceptions.StandardError;
+import com.dscommerce.dto.exceptions.ValidationError;
 import com.dscommerce.services.exceptions.DatabaseException;
 import com.dscommerce.services.exceptions.ResourceNotFoundException;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -43,5 +45,23 @@ public class ResourceExceptionHandler {
                 e.getMessage(),
                 request.getRequestURI());
         return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ValidationError> methodArgumentNotValid(
+            MethodArgumentNotValidException e,
+            HttpServletRequest request) {
+        String error = "Invalid data";
+        HttpStatus status = HttpStatus.UNPROCESSABLE_CONTENT;
+        ValidationError validationError = new ValidationError(
+                Instant.now(),
+                status.value(),
+                error,
+                request.getRequestURI());
+        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
+            validationError.addError(fieldError.getField(), fieldError.getDefaultMessage());
+        }
+
+        return ResponseEntity.status(status).body(validationError);
     }
 }
