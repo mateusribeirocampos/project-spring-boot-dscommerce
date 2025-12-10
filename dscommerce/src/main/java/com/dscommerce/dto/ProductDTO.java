@@ -14,7 +14,7 @@ public class ProductDTO {
     @NotBlank(message = "Name cannot be empty")
     private String name;
 
-    @Size(min = 3, max = 250, message = "Character number must be between 3 and 250")
+    @Size(min = 50, message = "Character number must be more than 50")
     @NotBlank(message = "Name cannot be empty")
     private String description;
 
