@@ -1,10 +1,15 @@
 package com.dscommerce.dto;
 
+import com.dscommerce.entities.Category;
 import com.dscommerce.entities.Product;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.URL;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductDTO {
 
@@ -15,14 +20,18 @@ public class ProductDTO {
     private String name;
 
     @Size(min = 50, message = "Character number must be more than 50")
-    @NotBlank(message = "Name cannot be empty")
+    @NotBlank(message = "Description cannot be empty")
     private String description;
 
     @PositiveOrZero
     private Double price;
 
-    @URL
+    @NotBlank(message = "URL of image must not be empty")
+    @URL(message = "Invalid URL")
+    @Pattern(regexp = "^https://.*", message = "URL must be use HTTPS")
     private String imgUrl;
+
+    private List<CategoryDTO> categories = new ArrayList<>();
 
     public ProductDTO(){}
 
@@ -40,6 +49,9 @@ public class ProductDTO {
         description = entity.getDescription();
         price = entity.getPrice();
         imgUrl = entity.getImgUrl();
+        for (Category cat : entity.getCategories()) {
+            this.categories.add(new CategoryDTO(cat));
+        }
     }
 
 
@@ -81,5 +93,9 @@ public class ProductDTO {
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
+    }
+
+    public List<CategoryDTO> getCategories() {
+        return categories;
     }
 }
