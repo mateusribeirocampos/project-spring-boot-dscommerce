@@ -66,9 +66,7 @@ public class ProductService {
         logger.info("Updating a product {} by id: {}", dto.getName(), id);
         try {
             Product entity = productRepository.getReferenceById(id);
-            System.out.println("SERVICE(after getRef) -> DTO: " + dto.getName() + " and entity: " + entity.getName() );
             dtoToEntity(dto, entity);
-            System.out.println("SERVICE(after dtoToEntity) -> DTO: " + dto.getName() + " and entity: " + entity.getName() );
             entity = productRepository.save(entity);
             return new ProductDTO(entity);
         } catch (EntityNotFoundException e) {
