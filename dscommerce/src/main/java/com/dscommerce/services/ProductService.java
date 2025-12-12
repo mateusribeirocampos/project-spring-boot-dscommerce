@@ -1,8 +1,11 @@
 package com.dscommerce.services;
 
 import com.dscommerce.controllers.ProductController;
+import com.dscommerce.dto.CategoryDTO;
 import com.dscommerce.dto.ProductDTO;
+import com.dscommerce.entities.Category;
 import com.dscommerce.entities.Product;
+import com.dscommerce.repositories.CategoryRepository;
 import com.dscommerce.repositories.ProductRepository;
 import com.dscommerce.services.exceptions.DatabaseException;
 import com.dscommerce.services.exceptions.ResourceNotFoundException;
@@ -27,6 +30,9 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAll(String name, Pageable pageable) {
@@ -54,13 +60,6 @@ public class ProductService {
         return new ProductDTO(entity);
     }
 
-    private void dtoToEntity(ProductDTO dto, Product entity) {
-        entity.setName(dto.getName());
-        entity.setDescription(dto.getDescription());
-        entity.setPrice(dto.getPrice());
-        entity.setImgUrl(dto.getImgUrl());
-    }
-
     @Transactional
     public ProductDTO update(Long id, ProductDTO dto) {
         logger.info("Updating a product {} by id: {}", dto.getName(), id);
@@ -71,6 +70,20 @@ public class ProductService {
             return new ProductDTO(entity);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Resource not found for id: " + id);
+        }
+    }
+
+    private void dtoToEntity(ProductDTO dto, Product entity) {
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setPrice(dto.getPrice());
+        entity.setImgUrl(dto.getImgUrl());
+
+        // product received category
+        entity.getCategories().clear();
+        for (CategoryDTO catDto : dto.getCategories()) {
+            Category category = categoryRepository.getReferenceById(catDto.getId());
+            entity.getCategories().add(category);
         }
     }
 
