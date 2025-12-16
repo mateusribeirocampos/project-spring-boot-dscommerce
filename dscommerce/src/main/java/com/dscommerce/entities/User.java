@@ -21,7 +21,6 @@ public class User implements UserDetails {
     private String phone;
     private LocalDate birthDate;
     private String password;
-    private String[] stringRoles;
 
     @ManyToMany
     @JoinTable(name = "tb_user_role",
@@ -31,14 +30,13 @@ public class User implements UserDetails {
 
     public User() {}
 
-    public User(Long id, String name, String email, String phone, LocalDate birthDate, String password, String[] stringRoles) {
+    public User(Long id, String name, String email, String phone, LocalDate birthDate, String password) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.birthDate = birthDate;
         this.password = password;
-        this.stringRoles = stringRoles;
     }
 
     public Long getId() {
@@ -119,16 +117,12 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public String[] getStringRoles() {
-        return stringRoles;
-    }
-
-    public void setStringRole(String[] stringRoles) {
-        this.stringRoles = stringRoles;
-    }
-
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
     }
 
     public void addRole(Role role) {

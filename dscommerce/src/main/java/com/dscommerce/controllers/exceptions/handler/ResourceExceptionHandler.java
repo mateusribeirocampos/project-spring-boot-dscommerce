@@ -52,7 +52,7 @@ public class ResourceExceptionHandler {
             MethodArgumentNotValidException e,
             HttpServletRequest request) {
         String error = "Invalid data";
-        HttpStatus status = HttpStatus.UNPROCESSABLE_CONTENT;
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
         ValidationError validationError = new ValidationError(
                 Instant.now(),
                 status.value(),
