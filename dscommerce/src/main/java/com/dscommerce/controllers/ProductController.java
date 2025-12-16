@@ -57,7 +57,6 @@ public class ProductController {
                                              @Valid @RequestBody ProductDTO dto) {
         logger.info("PUT /products/{} - updating product {} by id", id, dto.getName());
         dto = productService.update(id, dto);
-        System.out.println("Controller layer: dto: " + dto.getName());
         return ResponseEntity.ok(dto);
     }
 
