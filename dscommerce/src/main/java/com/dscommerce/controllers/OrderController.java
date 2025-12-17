@@ -39,7 +39,7 @@ public class OrderController {
         return ResponseEntity.ok(dto);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
     @PostMapping
     public ResponseEntity<OrderDTO> insert(@Valid @RequestBody OrderDTO dto) {
         logger.info("POST /orders - creating a order {}", dto.getClient());
