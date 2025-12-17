@@ -2,10 +2,7 @@ package com.dscommerce.dto;
 
 import com.dscommerce.entities.Category;
 import com.dscommerce.entities.Product;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.URL;
 
 import java.util.ArrayList;
@@ -23,7 +20,8 @@ public class ProductDTO {
     @NotBlank(message = "Description cannot be empty")
     private String description;
 
-    @PositiveOrZero
+    @NotNull(message = "This field is required")
+    @Positive(message = "Price must be positive")
     private Double price;
 
     @NotBlank(message = "URL of image must not be empty")

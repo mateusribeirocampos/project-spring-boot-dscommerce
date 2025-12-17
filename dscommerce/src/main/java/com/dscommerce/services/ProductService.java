@@ -3,6 +3,7 @@ package com.dscommerce.services;
 import com.dscommerce.controllers.ProductController;
 import com.dscommerce.dto.CategoryDTO;
 import com.dscommerce.dto.ProductDTO;
+import com.dscommerce.dto.ProductMinDTO;
 import com.dscommerce.entities.Category;
 import com.dscommerce.entities.Product;
 import com.dscommerce.repositories.CategoryRepository;
@@ -34,10 +35,10 @@ public class ProductService {
     private CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
-    public Page<ProductDTO> findAll(String name, Pageable pageable) {
+    public Page<ProductMinDTO> findAll(String name, Pageable pageable) {
         logger.info("Finding all products");
         Page<Product> productPage = productRepository.searchByName(name, pageable);
-        return productPage.map(ProductDTO::new);
+        return productPage.map(ProductMinDTO::new);
     }
 
     @Transactional(readOnly = true)

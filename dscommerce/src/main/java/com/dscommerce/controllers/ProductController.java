@@ -1,6 +1,7 @@
 package com.dscommerce.controllers;
 
 import com.dscommerce.dto.ProductDTO;
+import com.dscommerce.dto.ProductMinDTO;
 import com.dscommerce.entities.Product;
 import com.dscommerce.services.ProductService;
 import jakarta.validation.Valid;
@@ -26,11 +27,11 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> findAll(
+    public ResponseEntity<Page<ProductMinDTO>> findAll(
             @RequestParam(name = "name", defaultValue = "") String name,
             Pageable pageable) {
         logger.info("GET /products?size=21&page=0&sort=name,desc&name=pc%20gamer - finding all products");
-        Page<ProductDTO> dto = productService.findAll(name, pageable);
+        Page<ProductMinDTO> dto = productService.findAll(name, pageable);
         return ResponseEntity.ok(dto);
     }
 

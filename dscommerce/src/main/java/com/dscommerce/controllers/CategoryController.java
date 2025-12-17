@@ -2,6 +2,7 @@ package com.dscommerce.controllers;
 
 import com.dscommerce.dto.CategoryDTO;
 import com.dscommerce.services.CategoryService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public ResponseEntity<CategoryDTO> insert(@RequestBody CategoryDTO dto) {
+    public ResponseEntity<CategoryDTO> insert(@Valid @RequestBody CategoryDTO dto) {
         logger.info("POST /categories - creating a category {}", dto.getName());
         dto = categoryService.insert(dto);
         URI uri = ServletUriComponentsBuilder
@@ -51,7 +52,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = "/{id}")
-    public ResponseEntity<CategoryDTO> update(@PathVariable Long id,
+    public ResponseEntity<CategoryDTO> update(@Valid @PathVariable Long id,
                                              @RequestBody CategoryDTO dto) {
         logger.info("PUT /categorys/{} - updating category {} by id", id, dto.getName());
         dto = categoryService.update(id, dto);

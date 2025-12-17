@@ -17,6 +17,5 @@ public class AuthService {
             !me.getId().equals(userId)) {
             throw new ForbiddenException("Access denied");
         }
-        System.out.println("Access authorized");
     }
 }
