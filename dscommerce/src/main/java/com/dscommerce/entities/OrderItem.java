@@ -1,6 +1,6 @@
 package com.dscommerce.entities;
 
-import com.dscommerce.entities.pk.OrdemItemPk;
+import com.dscommerce.entities.pk.OrderItemPk;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -12,7 +12,7 @@ import java.util.Objects;
 public class OrderItem {
 
     @EmbeddedId
-    private OrdemItemPk id = new OrdemItemPk();
+    private OrderItemPk id = new OrderItemPk();
 
     private Integer quantity;
     private Double price;
@@ -20,7 +20,7 @@ public class OrderItem {
     public OrderItem() {
     }
 
-    public OrderItem(Order order, Product product, OrdemItemPk id, Integer quantity, Double price) {
+    public OrderItem(Order order, Product product, OrderItemPk id, Integer quantity, Double price) {
         id.setOrder(order);
         id.setProduct(product);
         this.id = id;
