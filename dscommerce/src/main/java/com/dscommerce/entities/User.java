@@ -22,6 +22,9 @@ public class User implements UserDetails {
     private LocalDate birthDate;
     private String password;
 
+    @OneToMany(mappedBy = "client")
+    private List<Order> orders = new ArrayList<>();
+
     @ManyToMany
     @JoinTable(name = "tb_user_role",
         joinColumns = @JoinColumn(name = "user_id"),
@@ -115,6 +118,10 @@ public class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 
     public void setRoles(Set<Role> roles) {
