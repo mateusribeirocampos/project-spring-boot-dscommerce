@@ -36,8 +36,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public CategoryDTO findById(Long id) {
         logger.info("Finding one category by id: {}", id);
-        Optional<Category> result = categoryRepository.findById(id);
-        Category Category = result
+        Category Category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found for id: " + id));
         return new CategoryDTO(Category);
     }

@@ -39,8 +39,12 @@ public class OrderService {
 
     @Autowired
     private ProductRepository productRepository;
+
     @Autowired
     private OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private AuthService authService;
 
     @Transactional(readOnly = true)
     public List<OrderDTO> findAll() {
@@ -52,9 +56,9 @@ public class OrderService {
     @Transactional(readOnly = true)
     public OrderDTO findById(Long id) {
         logger.info("Finding one order by id: {}", id);
-        Optional<Order> result = orderRepository.findById(id);
-        Order order = result
+        Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found for id: " + id));
+        authService.validateSelfOrAdmin(order.getClient().getId());
         return new OrderDTO(order);
     }
 

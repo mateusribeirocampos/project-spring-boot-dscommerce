@@ -43,8 +43,7 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
         logger.info("Finding one product by id: {}", id);
-        Optional<Product> result = productRepository.findById(id);
-        Product product = result
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found for id: " + id));
         return new ProductDTO(product);
     }

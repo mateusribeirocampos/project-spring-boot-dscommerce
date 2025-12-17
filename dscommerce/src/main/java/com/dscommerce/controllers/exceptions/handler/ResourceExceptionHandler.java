@@ -3,6 +3,7 @@ package com.dscommerce.controllers.exceptions.handler;
 import com.dscommerce.controllers.exceptions.StandardError;
 import com.dscommerce.dto.exceptions.ValidationError;
 import com.dscommerce.services.exceptions.DatabaseException;
+import com.dscommerce.services.exceptions.ForbiddenException;
 import com.dscommerce.services.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -63,5 +64,20 @@ public class ResourceExceptionHandler {
         }
 
         return ResponseEntity.status(status).body(validationError);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<StandardError> forbidden(
+            ForbiddenException e,
+            HttpServletRequest request) {
+        String error = "Unauthorized";
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        StandardError err = new StandardError(
+                Instant.now(),
+                status.value(),
+                error,
+                e.getMessage(),
+                request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
     }
 }
