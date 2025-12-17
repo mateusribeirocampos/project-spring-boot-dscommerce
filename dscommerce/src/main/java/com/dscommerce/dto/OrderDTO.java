@@ -1,9 +1,12 @@
 package com.dscommerce.dto;
 
 import com.dscommerce.entities.Order;
-import com.dscommerce.entities.OrderStatus;
+import com.dscommerce.entities.enums.OrderStatus;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderDTO {
 
@@ -12,6 +15,9 @@ public class OrderDTO {
     private OrderStatus orderStatus;
     private ClientDTO client;
     private PaymentDTO payment;
+
+    @NotEmpty(message = "Order must have at least one item")
+    private List<OrderItemDTO> items = new ArrayList<>();
 
     public OrderDTO() {}
 
@@ -51,5 +57,13 @@ public class OrderDTO {
 
     public PaymentDTO getPayment() {
         return payment;
+    }
+
+    public Double getTotal() {
+        double sum = 0.0;
+        for (OrderItemDTO item : items) {
+            sum += item.getSubTotal();
+        }
+        return sum;
     }
 }
