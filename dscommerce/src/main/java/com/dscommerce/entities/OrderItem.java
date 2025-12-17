@@ -20,10 +20,9 @@ public class OrderItem {
     public OrderItem() {
     }
 
-    public OrderItem(Order order, Product product, OrderItemPk id, Integer quantity, Double price) {
+    public OrderItem(Order order, Product product, Integer quantity, Double price) {
         id.setOrder(order);
         id.setProduct(product);
-        this.id = id;
         this.quantity = quantity;
         this.price = price;
     }
@@ -63,8 +62,8 @@ public class OrderItem {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        OrderItem ordemItem = (OrderItem) o;
-        return Objects.equals(id, ordemItem.id);
+        OrderItem orderItem = (OrderItem) o;
+        return Objects.equals(id, orderItem.id);
     }
 
     @Override

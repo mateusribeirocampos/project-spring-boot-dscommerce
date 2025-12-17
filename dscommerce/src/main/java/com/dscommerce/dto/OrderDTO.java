@@ -1,6 +1,7 @@
 package com.dscommerce.dto;
 
 import com.dscommerce.entities.Order;
+import com.dscommerce.entities.OrderItem;
 import com.dscommerce.entities.enums.OrderStatus;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -32,10 +33,14 @@ public class OrderDTO {
     public OrderDTO(Order entity) {
         id = entity.getId();
         moment = entity.getMoment();
-        orderStatus = entity.getOrderStatus();
+        orderStatus = entity.getStatus();
         client = new ClientDTO(entity.getClient());
-        if (entity.getPayment() == null) {
+        if (entity.getPayment() != null) {
             payment = new PaymentDTO(entity.getPayment());
+        }
+        for (OrderItem item : entity.getItems()) {
+            OrderItemDTO itemDTO = new OrderItemDTO(item);
+            items.add(itemDTO);
         }
     }
 
@@ -57,6 +62,10 @@ public class OrderDTO {
 
     public PaymentDTO getPayment() {
         return payment;
+    }
+
+    public List<OrderItemDTO> getItems() {
+        return items;
     }
 
     public Double getTotal() {
