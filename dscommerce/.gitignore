@@ -31,3 +31,17 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Security & Environment Variables ###
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets/
+
+### Application Generated Files ###
+create-schema.sql
+data.sql
+
+CONFIG-REFERENCE.md

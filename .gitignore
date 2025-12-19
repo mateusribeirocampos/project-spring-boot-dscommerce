@@ -197,7 +197,7 @@ README.html
 .exercism
 
 ### EnvFiles
-.env
+dscommerce/.env
 .idea
 
 # Dados sensíveis

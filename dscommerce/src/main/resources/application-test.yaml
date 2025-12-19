@@ -1,21 +1,87 @@
+# ==============================================================================
+# DSCOMMERCE - Perfil de TESTES
+# ==============================================================================
+# Este perfil é usado para testes automatizados (JUnit, Integration Tests).
+# Utiliza H2 in-memory para testes rápidos e isolados.
+# ==============================================================================
+
 spring:
+  # ==============================================================================
+  # DataSource - H2 In-Memory Database
+  # ==============================================================================
   datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password:
 
+    # HikariCP - Pool mínimo para testes
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+
+  # ==============================================================================
+  # H2 Console - Desabilitado em testes (habilitar se necessário debug)
+  # ==============================================================================
   h2:
     console:
-      enable: true
-      path: /h2-console
+      enabled: false
 
+  # ==============================================================================
+  # JPA/Hibernate - Configurações de Teste
+  # ==============================================================================
   jpa:
+    # Dialeto H2
     database-platform: org.hibernate.dialect.H2Dialect
-    defer-datasource-initialization: true
-    show-sql: true
+
     hibernate:
+      # create-drop: Recria o schema para cada teste (isolamento)
       ddl-auto: create-drop
+
+    # Não mostra SQL em testes (deixa output limpo)
+    show-sql: false
+
     properties:
       hibernate:
         format_sql: true
+        generate_statistics: false
+
+  # ==============================================================================
+  # Inicialização de dados para testes (se necessário)
+  # ==============================================================================
+  # sql:
+  #   init:
+  #     mode: always
+  #     data-locations: classpath:test-data.sql
+
+# ==============================================================================
+# Logging - Mínimo em testes
+# ==============================================================================
+logging:
+  level:
+    root: WARN
+    com.dscommerce: INFO
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+
+# ==============================================================================
+# Server - Porta aleatória para testes paralelos
+# ==============================================================================
+server:
+  port: 0
+
+# ==============================================================================
+# Security - Valores de teste
+# ==============================================================================
+security:
+  client-id: test-client-id
+  client-secret: test-client-secret
+  jwt:
+    duration: 3600
+
+# ==============================================================================
+# CORS - Desabilitado em testes (ou origins específicas)
+# ==============================================================================
+cors:
+  origins: "*"

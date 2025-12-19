@@ -1,0 +1,104 @@
+# ==============================================================================
+# DSCOMMERCE - Perfil de DESENVOLVIMENTO
+# ==============================================================================
+# Este perfil é usado para desenvolvimento local.
+# Configurações aqui SOBRESCREVEM ou COMPLEMENTAM as do application.yaml
+# ==============================================================================
+
+spring:
+  # ==============================================================================
+  # DataSource - PostgreSQL Local
+  # ==============================================================================
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/${NAMEDB:dscommerce_dev}
+    username: ${USRDB:postgres}
+    password: ${PWSDB:postgres}
+
+    # HikariCP - Pool de Conexões (otimizado para dev)
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  # ==============================================================================
+  # JPA/Hibernate - Configurações de Desenvolvimento
+  # ==============================================================================
+  jpa:
+    # Dialeto específico do PostgreSQL
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+    hibernate:
+      # create-drop: Recria o schema a cada restart (útil para dev)
+      # Outras opções: create, update, validate, none
+      ddl-auto: create-drop
+
+    # Mostra SQL formatado no console
+    show-sql: true
+
+    properties:
+      hibernate:
+        # Habilita estatísticas do Hibernate (útil para performance tuning)
+        generate_statistics: false
+
+        # Geração do schema SQL em arquivo (útil para documentação)
+        jakarta:
+          persistence:
+            schema-generation:
+              create-source: metadata
+              scripts:
+                action: create
+                create-target: create-schema.sql
+
+        # Delimitador para statements SQL
+        hbm2ddl:
+          delimiter: ;
+
+  # ==============================================================================
+  # DevTools - Reinicialização automática em dev
+  # ==============================================================================
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+# ==============================================================================
+# Logging - Mais verboso em desenvolvimento
+# ==============================================================================
+logging:
+  level:
+    root: INFO
+    com.dscommerce: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+
+# ==============================================================================
+# Server
+# ==============================================================================
+server:
+  port: 8080
+
+  # Mensagens de erro detalhadas em dev
+  error:
+    include-stacktrace: always
+
+# ==============================================================================
+# Security - Valores de desenvolvimento
+# ==============================================================================
+# Sobrescrever se necessário valores específicos de dev
+# security:
+#   client-id: dev-client-id
+#   client-secret: dev-client-secret
+#   jwt:
+#     duration: 3600
+
+# ==============================================================================
+# CORS - Origins de desenvolvimento
+# ==============================================================================
+# cors:
+#   origins: http://localhost:3000,http://localhost:5173,http://localhost:4200

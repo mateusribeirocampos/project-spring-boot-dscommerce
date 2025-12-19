@@ -1,17 +1,102 @@
+# ==============================================================================
+# DSCOMMERCE - Configuração Base (Comum a Todos os Perfis)
+# ==============================================================================
+# Este arquivo contém APENAS configurações compartilhadas por todos os ambientes.
+# Configurações específicas de ambiente devem estar nos respectivos application-{profile}.yaml
+# ==============================================================================
+
 spring:
   application:
     name: dscommerce
+
+  # Perfil ativo (pode ser sobrescrito via variável de ambiente SPRING_PROFILES_ACTIVE)
   profiles:
-    active: test
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  # ==============================================================================
+  # JPA/Hibernate - Configurações Comuns
+  # ==============================================================================
   jpa:
+    # Formata SQL no console (útil para debug em todos os ambientes)
+    properties:
+      hibernate:
+        format_sql: true
+
+    #open-in-view habilitado por padrão (pode ser sobrescrito por perfil)
+    # ATENÇÃO: Em produção, considere desabilitar se usar padrões assíncronos
     open-in-view: true
 
+# ==============================================================================
+# Security - OAuth2 e JWT
+# ==============================================================================
+# Estas configurações são comuns mas usam variáveis de ambiente
+# Em cada ambiente, você define valores diferentes nas envs
 security:
+  # Client ID e Secret para OAuth2
   client-id: ${CLIENT_ID:myclientid}
   client-secret: ${CLIENT_SECRET:myclientsecret}
 
+  # Duração do token JWT (em segundos)
+  # Exemplo: 86400 = 24 horas
   jwt:
     duration: ${JWT_DURATION:86400}
 
+# ==============================================================================
+# CORS - Cross-Origin Resource Sharing
+# ==============================================================================
 cors:
-   origins: ${CORS_ORIGINS:http://localhost:3000,http://localhost:5173}
+  # Origins permitidas (separadas por vírgula)
+  # Dev: localhost nas portas comuns de frontend
+  # Prod: Deve ser sobrescrito com domínios reais
+  origins: ${CORS_ORIGINS:http://localhost:3000,http://localhost:5173}
+
+# ==============================================================================
+# Logging - Configuração Base
+# ==============================================================================
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+  level:
+    # Nível root (pode ser sobrescrito por perfil)
+    root: INFO
+
+    # Logs do próprio projeto
+    com.dscommerce: INFO
+
+    # Logs do Spring Framework
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+
+    # Logs do Hibernate (SQL gerado)
+    org.hibernate.SQL: DEBUG
+
+    # Logs dos parâmetros do SQL (?, ?, ?)
+    org.hibernate.orm.jdbc.bind: TRACE
+
+# ==============================================================================
+# Server - Configurações do Servidor
+# ==============================================================================
+server:
+  # Porta padrão (pode ser sobrescrita por perfil ou env)
+  port: ${SERVER_PORT:8080}
+
+  # Tratamento de erros
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: on_param
+    include-exception: false
+
+# ==============================================================================
+# Actuator (Opcional - Descomentar se adicionar spring-boot-starter-actuator)
+# ==============================================================================
+# management:
+#   endpoints:
+#     web:
+#       exposure:
+#         include: health,info
+#   endpoint:
+#     health:
+#       show-details: when-authorized

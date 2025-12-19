@@ -1,0 +1,161 @@
+# ==============================================================================
+# DSCOMMERCE - Production profile
+# ==============================================================================
+
+spring:
+  # ==============================================================================
+  # DataSource - PostgreSQL
+  # ==============================================================================
+  datasource:
+    driver-class-name: org.postgresql.Driver
+
+    # URL completa com host, porta e database name via variáveis de ambiente
+    # Formato: jdbc:postgresql://host:port/database
+    url: jdbc:postgresql://localhost:5432/${NAMEDB}
+
+    # Credenciais via variáveis de ambiente (OBRIGATÓRIO em produção)
+    username: ${USRDB}
+    password: ${PWSDB}
+
+    # HikariCP - Pool de Conexões (otimizado para produção)
+    hikari:
+      # Pool maior para suportar mais requisições concorrentes
+      maximum-pool-size: ${DB_POOL_SIZE:20}
+      minimum-idle: ${DB_POOL_MIN_IDLE:10}
+
+      # Timeouts em millisegundos
+      connection-timeout: 30000    # 30 segundos
+      idle-timeout: 600000          # 10 minutos
+      max-lifetime: 1800000         # 30 minutos
+
+      # Validação de conexões
+      connection-test-query: SELECT 1
+
+  # ==============================================================================
+  # JPA/Hibernate - setup prod
+  # ==============================================================================
+  jpa:
+    # Dialeto PostgreSQL
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+    hibernate:
+      # CRÍTICO: Em produção, NUNCA usar create, create-drop ou update!
+      # validate: Valida o schema mas não faz alterações
+      # none: Não faz nada (use migrations como Flyway/Liquibase)
+      ddl-auto: ${HIBERNATE_DDL_AUTO:validate}
+
+    # Não mostra SQL em produção (performance)
+    show-sql: false
+
+    # open-in-view: false é recomendado em produção para evitar lazy loading issues
+    # Descomente se sua aplicação estiver preparada (DTOs bem definidos)
+    # open-in-view: false
+
+    properties:
+      hibernate:
+        # Otimizações para produção
+        jdbc:
+          batch_size: 20
+          fetch_size: 50
+
+        # Cache de segundo nível (descomentar se configurar provider)
+        # cache:
+        #   use_second_level_cache: true
+        #   region.factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+
+        # Estatísticas desabilitadas em produção
+        generate_statistics: false
+
+# ==============================================================================
+# Logging - Produção (apenas erros e avisos importantes)
+# ==============================================================================
+logging:
+  # Configuração de arquivo de log (opcional)
+  file:
+    name: ${LOG_FILE_PATH:/var/log/dscommerce/application.log}
+    max-size: 10MB
+    max-history: 30
+
+  level:
+    root: WARN
+    com.dscommerce: INFO
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+
+    # Em caso de troubleshooting, pode aumentar para DEBUG via env
+    # com.dscommerce: ${LOG_LEVEL_APP:INFO}
+
+# ==============================================================================
+# Server
+# ==============================================================================
+server:
+  # Porta via variável de ambiente (comum em containers/cloud)
+  port: ${SERVER_PORT:8080}
+
+  # Mensagens de erro genéricas em produção (segurança)
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+
+  # Compressão de resposta (performance)
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+
+  # HTTP/2 (se usar HTTPS)
+  # http2:
+  #   enabled: true
+
+# ==============================================================================
+# Security - Valores de Produção (VIA VARIÁVEIS DE AMBIENTE)
+# ==============================================================================
+security:
+  # NUNCA usar valores padrão em produção!
+  client-id: ${CLIENT_ID}
+  client-secret: ${CLIENT_SECRET}
+
+  jwt:
+    # Duração do token em segundos
+    # Exemplo: 3600 = 1 hora, 86400 = 24 horas
+    duration: ${JWT_DURATION:3600}
+
+# ==============================================================================
+# CORS - Origins de Produção
+# ==============================================================================
+cors:
+  # Lista de origins permitidas (domínios reais da aplicação)
+  # Exemplo: https://app.dscommerce.com,https://admin.dscommerce.com
+  origins: ${CORS_ORIGINS}
+
+# ==============================================================================
+# Actuator - Monitoramento (se habilitado)
+# ==============================================================================
+# management:
+#   endpoints:
+#     web:
+#       exposure:
+#         # Expor apenas endpoints necessários
+#         include: health,metrics,prometheus
+#       base-path: /actuator
+#   endpoint:
+#     health:
+#       show-details: never
+#   metrics:
+#     export:
+#       prometheus:
+#         enabled: true
+
+# ==============================================================================
+# Configurações de SSL/TLS (se aplicável)
+# ==============================================================================
+# server:
+#   ssl:
+#     enabled: true
+#     key-store: ${SSL_KEY_STORE_PATH}
+#     key-store-password: ${SSL_KEY_STORE_PASSWORD}
+#     key-store-type: PKCS12
+#     key-alias: ${SSL_KEY_ALIAS}
