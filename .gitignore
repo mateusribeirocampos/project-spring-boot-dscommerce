@@ -197,11 +197,26 @@ README.html
 .exercism
 
 ### EnvFiles
+.env
+.env.local
+.env.*.local
 dscommerce/.env
 .idea
 
 # Dados sensíveis
 db.properties
+*.key
+*.pem
+secrets/
 
 # Mas versione o exemplo
 !db.properties.example
+
+### Spring Boot Generated Files ###
+HELP.md
+create-schema.sql
+CONFIG-REFERENCE.md
+
+# Permitir source em target (Spring Boot padrão)
+!**/src/main/**/target/
+!**/src/test/**/target/
