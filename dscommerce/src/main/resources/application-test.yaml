@@ -1,62 +1,49 @@
 # ==============================================================================
-# DSCOMMERCE - Perfil de TESTES
+# DSCOMMERCE - Test Profile
 # ==============================================================================
-# Este perfil é usado para testes automatizados (JUnit, Integration Tests).
-# Utiliza H2 in-memory para testes rápidos e isolados.
+# For automated testing (JUnit, Integration Tests)
+# Uses H2 in-memory database for fast and isolated tests
 # ==============================================================================
 
 spring:
-  # ==============================================================================
-  # DataSource - H2 In-Memory Database
-  # ==============================================================================
+  # DataSource - H2 In-Memory
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password:
 
-    # HikariCP - Pool mínimo para testes
+    # Minimal connection pool for tests
     hikari:
       maximum-pool-size: 5
       minimum-idle: 1
 
-  # ==============================================================================
-  # H2 Console - Desabilitado em testes (habilitar se necessário debug)
-  # ==============================================================================
+  # H2 Console - Disabled (enable for debugging if needed)
   h2:
     console:
       enabled: false
 
-  # ==============================================================================
-  # JPA/Hibernate - Configurações de Teste
-  # ==============================================================================
+  # JPA/Hibernate
   jpa:
-    # Dialeto H2
     database-platform: org.hibernate.dialect.H2Dialect
 
     hibernate:
-      # create-drop: Recria o schema para cada teste (isolamento)
-      ddl-auto: create-drop
+      ddl-auto: create-drop  # Recreate schema for each test (isolation)
 
-    # Não mostra SQL em testes (deixa output limpo)
-    show-sql: false
+    show-sql: false  # Keep test output clean
 
     properties:
       hibernate:
         format_sql: true
         generate_statistics: false
 
-  # ==============================================================================
-  # Inicialização de dados para testes (se necessário)
-  # ==============================================================================
+  # Test data initialization (uncomment if needed)
   # sql:
   #   init:
   #     mode: always
   #     data-locations: classpath:test-data.sql
 
-# ==============================================================================
-# Logging - Mínimo em testes
-# ==============================================================================
+# Logging - Minimal output
 logging:
   level:
     root: WARN
@@ -65,23 +52,17 @@ logging:
     org.springframework.security: WARN
     org.hibernate.SQL: WARN
 
-# ==============================================================================
-# Server - Porta aleatória para testes paralelos
-# ==============================================================================
+# Server - Random port for parallel testing
 server:
   port: 0
 
-# ==============================================================================
-# Security - Valores de teste
-# ==============================================================================
+# Security - Test values
 security:
   client-id: test-client-id
   client-secret: test-client-secret
   jwt:
     duration: 3600
 
-# ==============================================================================
-# CORS - Desabilitado em testes (ou origins específicas)
-# ==============================================================================
+# CORS - Permissive for tests
 cors:
   origins: "*"

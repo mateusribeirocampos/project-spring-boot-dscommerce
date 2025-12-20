@@ -1,76 +1,58 @@
 # ==============================================================================
-# DSCOMMERCE - Production profile
+# DSCOMMERCE - Production Profile
+# ==============================================================================
+# All sensitive values MUST come from environment variables
 # ==============================================================================
 
 spring:
-  # ==============================================================================
   # DataSource - PostgreSQL
-  # ==============================================================================
   datasource:
     driver-class-name: org.postgresql.Driver
-
-    # URL completa com host, porta e database name via variáveis de ambiente
-    # Formato: jdbc:postgresql://host:port/database
     url: jdbc:postgresql://localhost:5432/${NAMEDB}
-
-    # Credenciais via variáveis de ambiente (OBRIGATÓRIO em produção)
     username: ${USRDB}
     password: ${PWSDB}
 
-    # HikariCP - Pool de Conexões (otimizado para produção)
+    # Connection pool optimized for production
     hikari:
-      # Pool maior para suportar mais requisições concorrentes
       maximum-pool-size: ${DB_POOL_SIZE:20}
       minimum-idle: ${DB_POOL_MIN_IDLE:10}
-
-      # Timeouts em millisegundos
-      connection-timeout: 30000    # 30 segundos
-      idle-timeout: 600000          # 10 minutos
-      max-lifetime: 1800000         # 30 minutos
-
-      # Validação de conexões
+      connection-timeout: 30000    # 30 seconds
+      idle-timeout: 600000          # 10 minutes
+      max-lifetime: 1800000         # 30 minutes
       connection-test-query: SELECT 1
 
-  # ==============================================================================
-  # JPA/Hibernate - setup prod
-  # ==============================================================================
+  # JPA/Hibernate
   jpa:
-    # Dialeto PostgreSQL
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
     hibernate:
-      # CRÍTICO: Em produção, NUNCA usar create, create-drop ou update!
-      # validate: Valida o schema mas não faz alterações
-      # none: Não faz nada (use migrations como Flyway/Liquibase)
+      # CRITICAL: Never use create/create-drop/update in production!
+      # validate: Validates schema without changes
+      # none: No action (use Flyway/Liquibase for migrations)
       ddl-auto: ${HIBERNATE_DDL_AUTO:validate}
 
-    # Não mostra SQL em produção (performance)
-    show-sql: false
+    show-sql: false  # Disabled for performance
 
-    # open-in-view: false é recomendado em produção para evitar lazy loading issues
-    # Descomente se sua aplicação estiver preparada (DTOs bem definidos)
+    # Uncomment if using DTOs properly to avoid lazy loading issues
     # open-in-view: false
 
     properties:
       hibernate:
-        # Otimizações para produção
+        # Batch operations for better performance
         jdbc:
           batch_size: 20
           fetch_size: 50
 
-        # Cache de segundo nível (descomentar se configurar provider)
+        # Second-level cache (uncomment if configured)
         # cache:
         #   use_second_level_cache: true
         #   region.factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
 
-        # Estatísticas desabilitadas em produção
         generate_statistics: false
 
-# ==============================================================================
-# Logging - Produção (apenas erros e avisos importantes)
-# ==============================================================================
+# Logging - Production (errors and important warnings only)
 logging:
-  # Configuração de arquivo de log (opcional)
+  # Optional: Log to file
   file:
     name: ${LOG_FILE_PATH:/var/log/dscommerce/application.log}
     max-size: 10MB
@@ -82,63 +64,46 @@ logging:
     org.springframework.web: WARN
     org.springframework.security: WARN
     org.hibernate.SQL: WARN
+    # Adjust via env for troubleshooting: ${LOG_LEVEL_APP:INFO}
 
-    # Em caso de troubleshooting, pode aumentar para DEBUG via env
-    # com.dscommerce: ${LOG_LEVEL_APP:INFO}
-
-# ==============================================================================
 # Server
-# ==============================================================================
 server:
-  # Porta via variável de ambiente (comum em containers/cloud)
   port: ${SERVER_PORT:8080}
 
-  # Mensagens de erro genéricas em produção (segurança)
+  # Generic error messages for security
   error:
     include-message: never
     include-binding-errors: never
     include-stacktrace: never
     include-exception: false
 
-  # Compressão de resposta (performance)
+  # Response compression for better performance
   compression:
     enabled: true
     mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
     min-response-size: 1024
 
-  # HTTP/2 (se usar HTTPS)
+  # HTTP/2 support (requires HTTPS)
   # http2:
   #   enabled: true
 
-# ==============================================================================
-# Security - Valores de Produção (VIA VARIÁVEIS DE AMBIENTE)
-# ==============================================================================
+# Security - Production values (REQUIRED via environment variables)
 security:
-  # NUNCA usar valores padrão em produção!
   client-id: ${CLIENT_ID}
   client-secret: ${CLIENT_SECRET}
-
   jwt:
-    # Duração do token em segundos
-    # Exemplo: 3600 = 1 hora, 86400 = 24 horas
-    duration: ${JWT_DURATION:3600}
+    duration: ${JWT_DURATION:3600}  # In seconds (3600 = 1 hour)
 
-# ==============================================================================
-# CORS - Origins de Produção
-# ==============================================================================
+# CORS - Production origins only
 cors:
-  # Lista de origins permitidas (domínios reais da aplicação)
-  # Exemplo: https://app.dscommerce.com,https://admin.dscommerce.com
+  # Example: https://app.dscommerce.com,https://admin.dscommerce.com
   origins: ${CORS_ORIGINS}
 
-# ==============================================================================
-# Actuator - Monitoramento (se habilitado)
-# ==============================================================================
+# Actuator - Monitoring (uncomment if needed)
 # management:
 #   endpoints:
 #     web:
 #       exposure:
-#         # Expor apenas endpoints necessários
 #         include: health,metrics,prometheus
 #       base-path: /actuator
 #   endpoint:
@@ -149,9 +114,7 @@ cors:
 #       prometheus:
 #         enabled: true
 
-# ==============================================================================
-# Configurações de SSL/TLS (se aplicável)
-# ==============================================================================
+# SSL/TLS Configuration (uncomment if using HTTPS)
 # server:
 #   ssl:
 #     enabled: true

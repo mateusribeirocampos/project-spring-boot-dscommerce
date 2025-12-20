@@ -1,21 +1,18 @@
 # ==============================================================================
-# DSCOMMERCE - Perfil de DESENVOLVIMENTO
+# DSCOMMERCE - Development Profile
 # ==============================================================================
-# Este perfil é usado para desenvolvimento local.
-# Configurações aqui SOBRESCREVEM ou COMPLEMENTAM as do application.yaml
+# For local development. Overrides/complements application.yaml settings
 # ==============================================================================
 
 spring:
-  # ==============================================================================
   # DataSource - PostgreSQL Local
-  # ==============================================================================
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/${NAMEDB:dscommerce_dev}
     username: ${USRDB:postgres}
     password: ${PWSDB:postgres}
 
-    # HikariCP - Pool de Conexões (otimizado para dev)
+    # Connection pool optimized for development
     hikari:
       maximum-pool-size: 10
       minimum-idle: 5
@@ -23,27 +20,21 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
 
-  # ==============================================================================
-  # JPA/Hibernate - Configurações de Desenvolvimento
-  # ==============================================================================
+  # JPA/Hibernate
   jpa:
-    # Dialeto específico do PostgreSQL
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
     hibernate:
-      # create-drop: Recria o schema a cada restart (útil para dev)
-      # Outras opções: create, update, validate, none
-      ddl-auto: create-drop
+      ddl-auto: create-drop  # Recreate schema on restart (useful for dev)
+      # Options: create, create-drop, update, validate, none
 
-    # Mostra SQL formatado no console
-    show-sql: true
+    show-sql: true  # Display formatted SQL in console
 
     properties:
       hibernate:
-        # Habilita estatísticas do Hibernate (útil para performance tuning)
         generate_statistics: false
 
-        # Geração do schema SQL em arquivo (útil para documentação)
+        # Generate DDL script file (useful for documentation)
         jakarta:
           persistence:
             schema-generation:
@@ -52,22 +43,17 @@ spring:
                 action: create
                 create-target: create-schema.sql
 
-        # Delimitador para statements SQL
         hbm2ddl:
           delimiter: ;
 
-  # ==============================================================================
-  # DevTools - Reinicialização automática em dev
-  # ==============================================================================
+  # DevTools - Auto-restart on code changes
   devtools:
     restart:
       enabled: true
     livereload:
       enabled: true
 
-# ==============================================================================
-# Logging - Mais verboso em desenvolvimento
-# ==============================================================================
+# Logging - Verbose for development
 logging:
   level:
     root: INFO
@@ -77,28 +63,21 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
 
-# ==============================================================================
 # Server
-# ==============================================================================
 server:
   port: 8080
 
-  # Mensagens de erro detalhadas em dev
+  # Detailed error messages in development
   error:
     include-stacktrace: always
 
-# ==============================================================================
-# Security - Valores de desenvolvimento
-# ==============================================================================
-# Sobrescrever se necessário valores específicos de dev
+# Security - Development values (override if needed)
 # security:
 #   client-id: dev-client-id
 #   client-secret: dev-client-secret
 #   jwt:
 #     duration: 3600
 
-# ==============================================================================
-# CORS - Origins de desenvolvimento
-# ==============================================================================
+# CORS - Development origins
 # cors:
 #   origins: http://localhost:3000,http://localhost:5173,http://localhost:4200
