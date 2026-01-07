@@ -72,11 +72,11 @@ server:
     include-stacktrace: always
 
 # Security - Development values (override if needed)
-# security:
-#   client-id: dev-client-id
-#   client-secret: dev-client-secret
-#   jwt:
-#     duration: 3600
+security:
+  client-id: myclient
+  client-secret: myclientsecret
+  jwt:
+    duration: 3600
 
 # CORS - Development origins
 # cors:
