@@ -5,12 +5,12 @@
 # ==============================================================================
 
 spring:
-  # DataSource - PostgreSQL Local
+  # DataSource - PostgreSQL Local (use Supabase only in production)
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/${NAMEDB:dscommerce_dev}
-    username: ${USRDB:postgres}
-    password: ${PWSDB:postgres}
+    url: jdbc:postgresql://localhost:${DB_PORT:5432}/${TEST_DB_NAME:dscommerce}
+    username: ${TEST_DB_USER:mrc}
+    password: ${TEST_DB_PSWDB:}
 
     # Connection pool optimized for development
     hikari:
@@ -73,7 +73,7 @@ server:
 
 # Security - Development values (override if needed)
 security:
-  client-id: myclient
+  client-id: myclientid
   client-secret: myclientsecret
   jwt:
     duration: 3600
