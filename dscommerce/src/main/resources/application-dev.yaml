@@ -1,11 +1,9 @@
 # ==============================================================================
 # DSCOMMERCE - Development Profile
 # ==============================================================================
-# For local development. Overrides/complements application.yaml settings
-# ==============================================================================
 
 spring:
-  # DataSource - PostgreSQL Local (use Supabase only in production)
+  # DataSource
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:${DB_PORT:5432}/${TEST_DB_NAME:dscommerce}
@@ -25,16 +23,16 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
     hibernate:
-      ddl-auto: create-drop  # Recreate schema on restart (useful for dev)
+      ddl-auto: create-drop
       # Options: create, create-drop, update, validate, none
 
-    show-sql: true  # Display formatted SQL in console
+    show-sql: true
 
     properties:
       hibernate:
         generate_statistics: false
 
-        # Generate DDL script file (useful for documentation)
+        # Generate DDL script file
         jakarta:
           persistence:
             schema-generation:
@@ -46,14 +44,14 @@ spring:
         hbm2ddl:
           delimiter: ;
 
-  # DevTools - Auto-restart on code changes
+  # DevTools
   devtools:
     restart:
       enabled: true
     livereload:
       enabled: true
 
-# Logging - Verbose for development
+# Logging
 logging:
   level:
     root: INFO
@@ -71,7 +69,7 @@ server:
   error:
     include-stacktrace: always
 
-# Security - Development values (override if needed)
+# Security
 security:
   client-id: myclientid
   client-secret: myclientsecret
@@ -79,5 +77,5 @@ security:
     duration: 3600
 
 # CORS - Development origins
-# cors:
-#   origins: http://localhost:3000,http://localhost:5173,http://localhost:4200
+cors:
+  origins: ${CORS_ORIGINS:http://localhost:3000,http://localhost:5173}

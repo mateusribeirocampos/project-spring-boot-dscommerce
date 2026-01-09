@@ -1,11 +1,8 @@
 # ==============================================================================
 # DSCOMMERCE - Production Profile
 # ==============================================================================
-# All sensitive values MUST come from environment variables
-# ==============================================================================
 
 spring:
-  # DataSource - PostgreSQL (Supabase on Render)
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME}
@@ -30,10 +27,7 @@ spring:
       # After first deploy, change to 'validate' or 'none'
       ddl-auto: ${HIBERNATE_DDL_AUTO:update}
 
-    show-sql: false  # Disabled for performance
-
-    # Uncomment if using DTOs properly to avoid lazy loading issues
-    # open-in-view: false
+    show-sql: false
 
     properties:
       hibernate:
@@ -49,9 +43,8 @@ spring:
 
         generate_statistics: false
 
-# Logging - Production (errors and important warnings only)
+# Logging
 logging:
-  # Optional: Log to file
   file:
     name: ${LOG_FILE_PATH:/var/log/dscommerce/application.log}
     max-size: 10MB
@@ -67,7 +60,7 @@ logging:
 
 # Server
 server:
-  port: ${PORT:8080}  # Render uses PORT env variable
+  port: ${PORT:8080}
 
   # Generic error messages for security
   error:
@@ -82,16 +75,12 @@ server:
     mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
     min-response-size: 1024
 
-  # HTTP/2 support (requires HTTPS)
-  # http2:
-  #   enabled: true
-
-# Security - Production values (REQUIRED via environment variables)
+# Security
 security:
   client-id: ${CLIENT_ID}
   client-secret: ${CLIENT_SECRET}
   jwt:
-    duration: ${JWT_DURATION:3600}  # In seconds (3600 = 1 hour)
+    duration: ${JWT_DURATION:3600}
 
 # CORS - Production origins only
 cors:
