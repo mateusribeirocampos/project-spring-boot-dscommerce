@@ -3,70 +3,50 @@
 # ==============================================================================
 
 spring:
+  # DataSource
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME}
+    # Using Transaction Pooler (port 6543) for IPv4 compatibility
+    # See: https://supabase.com/docs/guides/database/connecting-to-postgres#connection-pooler
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT:6543}/${DB_NAME}?sslmode=require
     username: ${DB_USER}
     password: ${DB_PASSWORD}
 
     # Connection pool optimized for Supabase Transaction Pooler + Render Free Tier
     hikari:
-      maximum-pool-size: 3          # Transaction Pooler: fewer connections
-      minimum-idle: 1
-      connection-timeout: 20000      # 20 seconds
-      idle-timeout: 180000           # 3 minutes (shorter for pooler)
-      max-lifetime: 300000           # 5 minutes (shorter for pooler)
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
       leak-detection-threshold: 60000
-
-      # CRITICAL: Disable prepared statement caching for Transaction Pooler
-      data-source-properties:
-        cachePrepStmts: false
-        prepStmtCacheSize: 0
-        prepStmtCacheSqlLimit: 0
 
   # JPA/Hibernate
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
     hibernate:
-      # IMPORTANT: First deploy needs 'create' or 'update'
-      # After first deploy, change to 'validate' or 'none'
-      ddl-auto: ${HIBERNATE_DDL_AUTO:update}
+      ddl-auto: ${HIBERNATE_DDL_AUTO:validate}
+      # Options: create, create-drop, update, validate, none
+      # Use 'update' for first deploy, then 'validate' for subsequent deploys
 
     show-sql: false
 
     properties:
       hibernate:
-        # IMPORTANT: Disable query caching for Transaction Pooler
-        jdbc:
-          batch_size: 10            # Reduced for Transaction Pooler
-          fetch_size: 20            # Reduced for Transaction Pooler
-
-        # Disable statement caching
-        query:
-          plan_cache_max_size: 0
-          plan_parameter_metadata_max_size: 0
-
-        # Connection handling for Transaction Pooler
-        connection:
-          provider_disables_autocommit: false
-
+        format_sql: false
         generate_statistics: false
 
-# Logging
+# Logging - Production (minimal logging for performance)
 logging:
-  file:
-    name: ${LOG_FILE_PATH:/var/log/dscommerce/application.log}
-    max-size: 10MB
-    max-history: 30
-
   level:
     root: WARN
     com.dscommerce: INFO
     org.springframework.web: WARN
     org.springframework.security: WARN
     org.hibernate.SQL: WARN
-    # Adjust via env for troubleshooting: ${LOG_LEVEL_APP:INFO}
+    com.zaxxer.hikari: WARN
+    org.springframework.jdbc: WARN
 
 # Server
 server:
@@ -79,13 +59,7 @@ server:
     include-stacktrace: never
     include-exception: false
 
-  # Response compression for better performance
-  compression:
-    enabled: true
-    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
-    min-response-size: 1024
-
-# Security
+# Security - OAuth2/JWT Configuration
 security:
   client-id: ${CLIENT_ID}
   client-secret: ${CLIENT_SECRET}
@@ -94,29 +68,4 @@ security:
 
 # CORS - Production origins only
 cors:
-  # Example: https://app.dscommerce.com,https://admin.dscommerce.com
   origins: ${CORS_ORIGINS}
-
-# Actuator - Monitoring (uncomment if needed)
-# management:
-#   endpoints:
-#     web:
-#       exposure:
-#         include: health,metrics,prometheus
-#       base-path: /actuator
-#   endpoint:
-#     health:
-#       show-details: never
-#   metrics:
-#     export:
-#       prometheus:
-#         enabled: true
-
-# SSL/TLS Configuration (uncomment if using HTTPS)
-# server:
-#   ssl:
-#     enabled: true
-#     key-store: ${SSL_KEY_STORE_PATH}
-#     key-store-password: ${SSL_KEY_STORE_PASSWORD}
-#     key-store-type: PKCS12
-#     key-alias: ${SSL_KEY_ALIAS}
