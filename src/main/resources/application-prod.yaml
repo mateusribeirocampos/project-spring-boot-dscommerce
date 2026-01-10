@@ -26,9 +26,9 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
     hibernate:
-      ddl-auto: ${HIBERNATE_DDL_AUTO:validate}
+      ddl-auto: ${HIBERNATE_DDL_AUTO:update}
       # Options: create, create-drop, update, validate, none
-      # Use 'update' for first deploy, then 'validate' for subsequent deploys
+      # Use 'update' to allow Hibernate to adjust schema differences
 
     show-sql: false
 
@@ -40,6 +40,7 @@ spring:
 # Logging - Production (minimal logging for performance)
 logging:
   level:
+
     root: WARN
     com.dscommerce: INFO
     org.springframework.web: WARN
