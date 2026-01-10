@@ -1,17 +1,20 @@
 # 🛒 DSCommerce - E-commerce Backend API
 
-[![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.3-brightgreen?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
-[![Spring Security](https://img.shields.io/badge/Spring%20Security-OAuth2-green?style=for-the-badge&logo=springsecurity&logoColor=white)](https://spring.io/projects/spring-security)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org)
-[![JWT](https://img.shields.io/badge/JWT-OAuth2-red?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io)
-[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+[![Production Deploy](https://img.shields.io/badge/Production-Live-brightgreen)](https://project-spring-boot-dscommerce.onrender.com)
+[![Java](https://img.shields.io/badge/Java-21-orange)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.3-brightgreen)](https://spring.io/projects/spring-boot)
+[![Spring Security](https://img.shields.io/badge/Spring%20Security-OAuth2-green)](https://spring.io/projects/spring-security)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)](https://www.postgresql.org/)
+[![JWT](https://img.shields.io/badge/JWT-OAuth2-red)](https://jwt.io)
+[![Maven](https://img.shields.io/badge/Maven-3.6+-red)](https://maven.apache.org/)
 
-> A complete e-commerce backend API built with **Spring Boot 3**, featuring **OAuth2 + JWT authentication**, role-based authorization, and RESTful best practices.
+A professional-grade Spring Boot REST API for e-commerce applications, featuring **OAuth2 + JWT authentication**, role-based authorization, complex JPA relationships, and production-ready PostgreSQL deployment on Render.
 
-[Features](#-features) • [Architecture](#-architecture) • [Getting Started](#-getting-started) • [API Documentation](#-api-documentation) • [Tech Stack](#-tech-stack)
+## 🌟 Live Demo
 
----
+**Production API**: [https://project-spring-boot-dscommerce.onrender.com](https://project-spring-boot-dscommerce.onrender.com)
+
+Test the API using Postman, curl, or any REST client with the endpoints documented below.
 
 ## 📋 About
 
@@ -535,6 +538,115 @@ Content-Type: application/json
   "path": "/products/999"
 }
 ```
+
+---
+
+## 🧪 Testing the Production API
+
+### 🔗 Base URLs
+
+- **Production:** `https://project-spring-boot-dscommerce.onrender.com`
+- **Local:** `http://localhost:8080`
+
+### Quick Start Examples
+
+#### 1. Get all products (Public endpoint)
+
+```bash
+curl https://project-spring-boot-dscommerce.onrender.com/products
+```
+
+#### 2. Get product by ID
+
+```bash
+curl https://project-spring-boot-dscommerce.onrender.com/products/1
+```
+
+#### 3. Login and get JWT token
+
+```bash
+curl -X POST https://project-spring-boot-dscommerce.onrender.com/oauth2/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=password" \
+  -d "username=alex@gmail.com" \
+  -d "password=123456" \
+  -d "client_id=myclientid" \
+  -d "client_secret=myclientsecret"
+```
+
+**Response:**
+```json
+{
+  "access_token": "eyJraWQiOiI5NGQzMjU4Ny0...",
+  "token_type": "Bearer",
+  "expires_in": 86400
+}
+```
+
+#### 4. Get current user info (Authenticated endpoint)
+
+```bash
+# Replace YOUR_TOKEN with the access_token from step 3
+curl https://project-spring-boot-dscommerce.onrender.com/users/me \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+#### 5. Create a new order (Authenticated endpoint)
+
+```bash
+curl -X POST https://project-spring-boot-dscommerce.onrender.com/orders \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "items": [
+      {"productId": 1, "quantity": 2},
+      {"productId": 3, "quantity": 1}
+    ]
+  }'
+```
+
+#### 6. Create a product (ADMIN only)
+
+```bash
+# Login as admin (alex@gmail.com) first, then use the token
+curl -X POST https://project-spring-boot-dscommerce.onrender.com/products \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "New Gaming Laptop",
+    "description": "High-performance gaming laptop with RTX 4080",
+    "price": 5500.00,
+    "imgUrl": "https://example.com/gaming-laptop.jpg",
+    "categories": [{"id": 2}]
+  }'
+```
+
+### 📊 Sample Data
+
+The production database is pre-populated with test data:
+
+#### 👥 Users
+
+| ID  | Name        | Email             | Password | Roles         |
+| --- | ----------- | ----------------- | -------- | ------------- |
+| 1   | Maria Brown | maria@gmail.com   | 123456   | CLIENT        |
+| 2   | Alex Green  | alex@gmail.com    | 123456   | CLIENT, ADMIN |
+
+#### 📂 Categories
+
+| ID  | Name        |
+| --- | ----------- |
+| 1   | Livros      |
+| 2   | Eletrônicos |
+| 3   | Computadores|
+
+#### 🛍️ Products
+
+| ID  | Name                  | Price     | Categories   |
+| --- | --------------------- | --------- | ------------ |
+| 1   | The Lord of the Rings | $90.50    | Livros       |
+| 2   | Smart TV              | $2,190.00 | Eletrônicos  |
+| 3   | Macbook Pro           | $1,250.00 | Computadores |
 
 ---
 
