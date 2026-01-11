@@ -13,54 +13,53 @@ jobs:
     steps:
       - name: Ping Supabase Database
         run: |
-          echo "🔄 Staring ping in the Supabase..."
+          echo "🔄 Starting ping to Supabase..."
           echo "Timestamp: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-          
-          # Simple requisition to API REST
+
+          # Ping the Render API (your Spring Boot app)
           response=$(curl -s -w "\n%{http_code}" \
-                -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-                -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-                "${{ secrets.SUPABASE_URL }}/product")
-          
+                "${{ secrets.SUPABASE_URL }}/products")
+
           # Split the response body and HTTP code
           http_code=$(echo "$response" | tail -n1)
           body=$(echo "$response" | head -n-1)
-          
-          echo "📊 Status HTTP: $http_code"
-          
-          # Check if the response was successfully
+
+          echo "📊 HTTP Status: $http_code"
+
+          # Check if the response was successful
           if [[ "$http_code" =~ ^2[0-9][0-9]$ ]]; then
-            echo "✅ Supabase is active and responding!"
-            echo "Response: $body"
+            echo "✅ API is active and responding!"
+            echo "Response preview: ${body:0:200}..."
           else
-            echo "⚠️ Response unexpected (code $http_code)"
+            echo "⚠️ Unexpected response (code $http_code)"
             echo "Response: $body"
             # The job doesn't fail, it just registers.
           fi
 
-      - name: Ping specifically in the tb_product table
+      - name: Verify API Health
         run: |
-          echo "🔍 Testing access to tb_product table..."
-          
-          # Try to do a simple SELECT (only counter)
+          echo "🔍 Verifying API health..."
+
+          # Try to get product count
           response=$(curl -s -w "\n%{http_code}" \
-                -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-                -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-                "${{ secrets.SUPABASE_URL }}/product?select=count")
-          
+                "${{ secrets.SUPABASE_URL }}/products?size=1")
+
           http_code=$(echo "$response" | tail -n1)
           body=$(echo "$response" | head -n-1)
-          
-          echo "📊 Status HTTP: $http_code"
-          
+
+          echo "📊 HTTP Status: $http_code"
+
           case $http_code in
             200)
-              echo "✅ tb_product table accessible!"
-              echo "Response: $body"
+              echo "✅ API endpoint accessible!"
+              echo "Response preview: ${body:0:200}..."
               ;;
-            401)
-              echo "🔒 Table protected by RLS (normal for security)"
-              echo "The ping was logged nonetheless!"
+            404)
+              echo "⚠️ Endpoint not found (check API path)"
+              ;;
+            500)
+              echo "⚠️ Server error (database might be paused)"
+              echo "Response: $body"
               ;;
             *)
               echo "⚠️ Response: $http_code"
