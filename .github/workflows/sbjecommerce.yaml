@@ -38,9 +38,9 @@ jobs:
             # The job doesn't fail, it just registers.
           fi
 
-      - name: Ping specifically in the tb_products table
+      - name: Ping specifically in the tb_product table
         run: |
-          echo "🔍 Testing access to tb_products table..."
+          echo "🔍 Testing access to tb_product table..."
           
           # Try to do a simple SELECT (only counter)
           response=$(curl -s -w "\n%{http_code}" \
@@ -55,7 +55,7 @@ jobs:
           
           case $http_code in
             200)
-              echo "✅ tb_products table accessible!"
+              echo "✅ tb_product table accessible!"
               echo "Response: $body"
               ;;
             401)
