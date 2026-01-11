@@ -1,0 +1,77 @@
+name: Supabase Keep-Alive Ping
+
+on:
+  schedule:
+    # Run each hour (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch:  # allow run manually
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Supabase Database
+        run: |
+          echo "🔄 Staring ping in the Supabase..."
+          echo "Timestamp: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          
+          # Simple requisition to API REST
+          response=$(curl -s -w "\n%{http_code}" \
+                -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+                -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+                "https://mstadxawqnnwhvfezfbd.supabase.co/rest/v1/")
+          
+          # Split the response body and HTTP code
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+          
+          echo "📊 Status HTTP: $http_code"
+          
+          # Check if the response was successfully
+          if [[ "$http_code" =~ ^2[0-9][0-9]$ ]]; then
+            echo "✅ Supabase is active and responding!"
+            echo "Response: $body"
+          else
+            echo "⚠️ Response unexpected (code $http_code)"
+            echo "Response: $body"
+            # The job doesn't fail, it just registers.
+          fi
+
+      - name: Ping specifically in the tb_products table
+        run: |
+          echo "🔍 Testing access to tb_products table..."
+          
+          # Try to do a simple SELECT (only counter)
+          response=$(curl -s -w "\n%{http_code}" \
+                -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+                -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+                "${{ secrets.SUPABASE_URL }}/products?select=count")
+          
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+          
+          echo "📊 Status HTTP: $http_code"
+          
+          case $http_code in
+            200)
+              echo "✅ tb_products table accessible!"
+              echo "Response: $body"
+              ;;
+            401)
+              echo "🔒 Table protected by RLS (normal for security)"
+              echo "The ping was logged nonetheless!"
+              ;;
+            *)
+              echo "⚠️ Response: $http_code"
+              echo "Body: $body"
+              ;;
+          esac
+
+      - name: Ping summarize
+        run: |
+          echo "📋 ================================"
+          echo "✅ Ping conclude with successfully!"
+          echo "🕐 Next ping in ~6 hours"
+          echo "📅 Date: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "================================"
