@@ -20,7 +20,7 @@ jobs:
           response=$(curl -s -w "\n%{http_code}" \
                 -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
                 -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-                "${{ secrets.SUPABASE_URL }}/products")
+                "${{ secrets.SUPABASE_URL }}/product")
           
           # Split the response body and HTTP code
           http_code=$(echo "$response" | tail -n1)
@@ -46,7 +46,7 @@ jobs:
           response=$(curl -s -w "\n%{http_code}" \
                 -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
                 -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-                "${{ secrets.SUPABASE_URL }}/products?select=count")
+                "${{ secrets.SUPABASE_URL }}/product?select=count")
           
           http_code=$(echo "$response" | tail -n1)
           body=$(echo "$response" | head -n-1)
