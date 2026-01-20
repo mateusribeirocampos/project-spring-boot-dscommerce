@@ -7,7 +7,7 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:${DB_PORT:5432}/${TEST_DB_NAME:dscommerce}
-    username: ${TEST_DB_USER:mrc}
+    username: ${TEST_DB_USER:mateusribeirodecampos}
     password: ${TEST_DB_PSWDB:}
 
     # Connection pool optimized for development
