@@ -1,6 +1,5 @@
 package com.dscommerce.services;
 
-import com.dscommerce.controllers.ProductController;
 import com.dscommerce.dto.CategoryDTO;
 import com.dscommerce.dto.ProductDTO;
 import com.dscommerce.dto.ProductMinDTO;
@@ -20,8 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 public class ProductService {

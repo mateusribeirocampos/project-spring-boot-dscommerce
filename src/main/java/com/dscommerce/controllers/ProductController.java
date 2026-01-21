@@ -2,7 +2,6 @@ package com.dscommerce.controllers;
 
 import com.dscommerce.dto.ProductDTO;
 import com.dscommerce.dto.ProductMinDTO;
-import com.dscommerce.entities.Product;
 import com.dscommerce.services.ProductService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;

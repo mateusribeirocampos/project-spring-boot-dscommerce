@@ -1,7 +1,6 @@
 package com.dscommerce.dto;
 
 import com.dscommerce.entities.Product;
-import jakarta.validation.constraints.*;
 
 public class ProductMinDTO {
 

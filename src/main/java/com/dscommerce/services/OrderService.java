@@ -4,7 +4,6 @@ import com.dscommerce.dto.OrderDTO;
 import com.dscommerce.dto.OrderItemDTO;
 import com.dscommerce.entities.*;
 import com.dscommerce.entities.enums.OrderStatus;
-import com.dscommerce.repositories.CategoryRepository;
 import com.dscommerce.repositories.OrderItemRepository;
 import com.dscommerce.repositories.OrderRepository;
 import com.dscommerce.repositories.ProductRepository;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -30,9 +28,6 @@ public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
 
     @Autowired
     private UserService userService;
