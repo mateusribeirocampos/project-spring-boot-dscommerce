@@ -1,6 +1,7 @@
 package com.dscommerce.repositories;
 
 import com.dscommerce.entities.Product;
+import com.dscommerce.tests.Factory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ public class ProductRepositoryTests {
 
     private long existingId;
     private long nonExistingId;
+    private long countTotalProduct;
 
     @Autowired
     private ProductRepository productRepository;
@@ -22,11 +24,12 @@ public class ProductRepositoryTests {
     @BeforeEach
     public void setup() {
         existingId = 1L;
-        nonExistingId = 2L;
+        nonExistingId = 1000L;
+        countTotalProduct = 25L;
+
     }
 
-
-    // DELETE
+    // Delete
     @Test
     public void deleteShouldDeleteObjectWhenIdExists() {
         productRepository.deleteById(existingId);
@@ -38,5 +41,29 @@ public class ProductRepositoryTests {
     public void deleteShouldDeleteObjectWhenIdDoesNotExist() {
 
         Assertions.assertDoesNotThrow(() -> productRepository.deleteById(nonExistingId));
+    }
+
+    // findById
+    @Test
+    public void findByIdShouldReturnProductWhenIdExists() {
+        Optional<Product> product = productRepository.findById(existingId);
+        Assertions.assertTrue(product.isPresent());
+    }
+
+    @Test
+    public void findByIShouldReturnEmptyWhenIdDoesNotExists() {
+        Optional<Product> product = productRepository.findById(nonExistingId);
+        Assertions.assertTrue(product.isEmpty());
+    }
+
+    // save
+    @Test
+    public void saveShouldPersistWithAutoincrementWhenIdIsNull() {
+        Product product = Factory.createProduct();
+        product.setId(null);
+        product =  productRepository.save(product);
+
+        Assertions.assertNotNull(product.getId());
+        Assertions.assertEquals(countTotalProduct + 1, product.getId());
     }
 }
