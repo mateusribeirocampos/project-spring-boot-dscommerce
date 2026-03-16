@@ -220,3 +220,6 @@ CONFIG-REFERENCE.md
 # Permitir source em target (Spring Boot padrão)
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+# development environment
+src/main/resources/application-dev.yaml

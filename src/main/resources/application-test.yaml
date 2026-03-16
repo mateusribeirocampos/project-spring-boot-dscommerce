@@ -64,3 +64,8 @@ security:
 # CORS - Permissive for tests
 cors:
   origins: "*"
+
+# resend email
+email:
+  from-address: ${EMAIL_FROM_ADDRESS:onboarding@resend.dev}
+  from-name: ${FROM_NAME:dscommerce}

@@ -71,3 +71,8 @@ security:
 # CORS - Production origins only
 cors:
   origins: ${CORS_ORIGINS}
+
+# resend email
+email:
+  from-address: ${EMAIL_FROM_ADDRESS}
+  from-name: ${FROM_NAME:dscommerce}
