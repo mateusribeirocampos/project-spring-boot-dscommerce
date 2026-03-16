@@ -74,5 +74,5 @@ cors:
 
 # resend email
 email:
-  from-address: ${EMAIL_FROM_ADDRESS}
+  from-address: ${EMAIL_FROM_ADDRESS:onboarding@resend.dev}
   from-name: ${FROM_NAME:dscommerce}
