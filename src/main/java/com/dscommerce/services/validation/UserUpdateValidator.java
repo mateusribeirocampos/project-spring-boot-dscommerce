@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.servlet.HandlerMapping;
 
 import java.util.ArrayList;
@@ -32,12 +34,21 @@ public class UserUpdateValidator implements ConstraintValidator<UserUpdateValid,
 
         @SuppressWarnings("unchecked")
         var uriVars = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        long userId = Long.parseLong(uriVars.get("id"));
+        String idStr = uriVars.get("id");
+
+        long userId;
+        if (idStr != null) {
+            userId = Long.parseLong(idStr);
+        } else {
+            Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String username = jwt.getClaim("username");
+            User authUser = userRepository.findByEmail(username);
+            userId = authUser.getId();
+        }
 
         List<FieldMessage> fieldMessageList = new ArrayList<>();
-
         User user = userRepository.findByEmail(dto.getEmail());
-        if (user != null && userId != user.getId()) {
+        if (user != null && !user.getId().equals(userId)) {
             fieldMessageList.add(new FieldMessage("email", "the email already exists"));
         }
 
