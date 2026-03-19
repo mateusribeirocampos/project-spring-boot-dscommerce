@@ -1,7 +1,7 @@
 package com.dscommerce.repositories;
 
 import com.dscommerce.entities.Product;
-import com.dscommerce.tests.Factory;
+import com.dscommerce.tests.ProductFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,6 @@ public class ProductRepositoryTests {
         existingId = 1L;
         nonExistingId = 1000L;
         countTotalProduct = 25L;
-
     }
 
     // Delete
@@ -59,7 +58,7 @@ public class ProductRepositoryTests {
     // save
     @Test
     public void saveShouldPersistWithAutoincrementWhenIdIsNull() {
-        Product product = Factory.createProduct();
+        Product product = ProductFactory.createProduct();
         product.setId(null);
         product =  productRepository.save(product);
 

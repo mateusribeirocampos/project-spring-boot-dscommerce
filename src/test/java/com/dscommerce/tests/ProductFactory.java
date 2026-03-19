@@ -4,7 +4,7 @@ import com.dscommerce.dto.ProductDTO;
 import com.dscommerce.entities.Category;
 import com.dscommerce.entities.Product;
 
-public class Factory {
+public class ProductFactory {
 
   public static Product createProduct() {
     Product product = new Product(1L, "PC Gamer WW",
