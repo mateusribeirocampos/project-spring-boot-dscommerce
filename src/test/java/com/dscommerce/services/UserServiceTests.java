@@ -1,6 +1,8 @@
 package com.dscommerce.services;
 
 import com.dscommerce.dto.UserDTO;
+import com.dscommerce.dto.UserInsertDTO;
+import com.dscommerce.entities.Role;
 import com.dscommerce.entities.User;
 import com.dscommerce.repositories.RoleRepository;
 import com.dscommerce.repositories.UserRepository;
@@ -23,11 +25,14 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTests {
 
-    private String existingEmail, nonExistingEmail;
+    private String existingEmail, nonExistingEmail, passwordMock;
     private User user;
+    private UserInsertDTO userInsertDTO;
 
     @InjectMocks
     private UserService userService;
@@ -45,7 +50,9 @@ public class UserServiceTests {
     void setUp() throws Exception {
         existingEmail = "maria@gmail.com";
         nonExistingEmail = "myemail@gmail.com";
+        passwordMock = "12345678";
         user = UserFactory.createUser();
+        userInsertDTO = UserFactory.createUserInsertDTO();
 
         var jwt = Jwt.withTokenValue("token")
                 .header("alg", "RS256")
@@ -96,5 +103,17 @@ public class UserServiceTests {
         Assertions.assertThrows(UsernameNotFoundException.class, () -> {
             userService.loadUserByUsername(nonExistingEmail);
         });
+    }
+
+    @Test
+    public void registerShouldReturnNotNullWhenRoleAndPasswordWereProvide() {
+        Mockito.when(userRepository.save(any())).thenReturn(user); //Cria User entity internamente (campos do DTO — podem ser null, não importa pro teste)
+        Mockito.when(roleRepository.findByAuthority(any())).thenReturn(new Role()); // roleRepository.findByAuthority() → retorna new Role()
+        Mockito.when(passwordEncoder.encode(any())).thenReturn(passwordMock); // passwordEncoder.encode() → retorna passwordMock
+
+        UserDTO result = userService.register(userInsertDTO);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(existingEmail, result.getEmail());
     }
 }
