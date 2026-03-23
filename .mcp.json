@@ -3,6 +3,10 @@
     "supabase": {
       "type": "http",
       "url": "https://mcp.supabase.com/mcp?project_ref=pmaovbnqqivkvyvtizdw"
+    },
+    "trello": {
+      "type": "http",
+      "url": "https://mcp.composio.dev/partner/composio/trello/mcp?customerId=370f11c9-e3db-476d-b561-48b1b24270f2&agent=claude"
     }
   }
 }

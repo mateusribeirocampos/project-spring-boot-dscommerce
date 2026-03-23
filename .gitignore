@@ -223,3 +223,4 @@ CONFIG-REFERENCE.md
 
 # development environment
 src/main/resources/application-dev.yaml
+.mcp.json

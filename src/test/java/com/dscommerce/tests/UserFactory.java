@@ -27,7 +27,22 @@ public class UserFactory {
 
     public static UserInsertDTO createUserInsertDTO() {
         UserInsertDTO dto = new UserInsertDTO();
+        dto.setId(3L);
+        dto.setName("Maria Brown");
+        dto.setEmail("maria@gmail.com");
+        dto.setPhone("988888888");
+        dto.setBirthDate(LocalDate.parse("1983-07-25"));
         dto.setPassword("12345678");
+        return dto;
+    }
+
+    public static UserUpdateDTO updateUserDTO() {
+        UserUpdateDTO dto = new UserUpdateDTO();
+        dto.setId(3L);
+        dto.setName("Maria White");
+        dto.setEmail("mariawhite@gmail.com");
+        dto.setPhone("977777777");
+        dto.setBirthDate(LocalDate.parse("1983-07-25"));
         return dto;
     }
 
