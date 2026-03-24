@@ -1,956 +1,180 @@
-# 🛒 DSCommerce - E-commerce Backend API
+# DSCommerce - Spring Boot E-commerce Backend
 
-[![Production Deploy](https://img.shields.io/badge/Production-Live-brightgreen)](https://project-spring-boot-dscommerce.onrender.com)
-[![Java](https://img.shields.io/badge/Java-21-orange)](https://www.oracle.com/java/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.3-brightgreen)](https://spring.io/projects/spring-boot)
-[![Spring Security](https://img.shields.io/badge/Spring%20Security-OAuth2-green)](https://spring.io/projects/spring-security)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)](https://www.postgresql.org/)
-[![JWT](https://img.shields.io/badge/JWT-OAuth2-red)](https://jwt.io)
-[![Maven](https://img.shields.io/badge/Maven-3.6+-red)](https://maven.apache.org/)
+A backend-focused e-commerce API built with Spring Boot.
+This project highlights authentication and authorization with JWT, role-based access control, layered architecture, JPA entity relationships, validation, and exception handling.
 
-A professional-grade Spring Boot REST API for e-commerce applications, featuring **OAuth2 + JWT authentication**, role-based authorization, complex JPA relationships, and production-ready PostgreSQL deployment on Render.
+It is the main backend project in my portfolio and was originally developed during the DevSuperior Spring Boot Professional course, then expanded and refined through additional implementation, testing, and deployment work.
 
-## 🌟 Live Demo
+**Live API:** https://project-spring-boot-dscommerce.onrender.com/
 
-**Production API**: [https://project-spring-boot-dscommerce.onrender.com](https://project-spring-boot-dscommerce.onrender.com)
+A separate frontend is available as a visual client for the API: [dscommerce-frontend](https://github.com/mateusribeirocampos/dscommerce-frontend)
 
-Test the API using Postman, curl, or any REST client with the endpoints documented below.
+## Tech Stack
 
-## 📋 About
+- Java 21
+- Spring Boot 3.4
+- Spring Security
+- OAuth2 Authorization Server
+- JWT
+- Spring Data JPA
+- PostgreSQL
+- H2
+- Maven
+- Supabase (production database)
+- Render.com (cloud hosting)
 
-DSCommerce is a **production-ready** backend system for e-commerce applications, demonstrating advanced Spring Boot concepts and industry best practices. The project implements a complete authentication and authorization flow using **OAuth2 Authorization Server** with **JWT tokens**, granular role-based access control, and a clean layered architecture.
+## Architecture
 
-Developed as part of the **Spring Boot Professional Course** by **Prof. Nelio Alves** at [DevSuperior](https://devsuperior.com.br/).
-
-### 🎯 Key Highlights
-
-- ✅ **Spring Security OAuth2** - Full implementation of Authorization Server + Resource Server
-- ✅ **JWT with RSA Signature** - Stateless tokens with 24-hour validity
-- ✅ **Custom Password Grant Type** - Built from scratch without external tutorials
-- ✅ **Method-level Authorization** - Granular access control with @PreAuthorize
-- ✅ **8 JPA Entities** - Complex relationships (ManyToMany, OneToMany, ManyToOne, OneToOne)
-- ✅ **Bean Validation** - Declarative data validation across all DTOs
-- ✅ **Centralized Exception Handling** - Standardized error responses
-- ✅ **RESTful API Design** - Paginated endpoints with proper HTTP semantics
-
----
-
-## ✨ Features
-
-### Authentication & Security
-- 🔐 OAuth2 Authorization Server with custom password grant
-- 🔑 JWT tokens signed with RSA keys (stateless authentication)
-- 🛡️ BCrypt password encryption
-- 👥 Role-based authorization (ADMIN, CLIENT)
-- 📝 Method-level security with @PreAuthorize
-
-### Business Features
-- 📦 **Product Management** - CRUD operations for products and categories
-- 🛍️ **Shopping Cart** - Order management with line items
-- 👤 **User Management** - User profiles with roles
-- 💳 **Payment Processing** - Order payment tracking
-- 📊 **Pagination & Filtering** - Efficient data retrieval
-
-### Technical Features
-- 🏗️ **Layered Architecture** - Clear separation of concerns (Controller → Service → Repository)
-- 📝 **DTO Pattern** - Entity-DTO conversion to decouple layers
-- 🔄 **Transactional Operations** - ACID compliance with @Transactional
-- ⚠️ **Exception Handling** - Custom exceptions with @RestControllerAdvice
-- 🔍 **Custom Queries** - Native and JPQL queries for complex operations
-
----
-
-## 🏗️ Architecture
-
-### System Architecture
-
-```
-                ┌─────────────┐
-                │   Client    │
-                │  (Frontend) │
-                └──────┬──────┘
-                   HTTP/JSON
-                       ↓
-┌───────────────────────────────────────┐
-│        Spring Boot Application        │
-│                                       │
-│  ┌────────────────────────────────┐   │
-│  │        @RestController Layer   │   │
-│  │  • ProductController           │   │
-│  │  • OrderController             │   │
-│  │  • UserController              │   │
-│  │  • CategoryController          │   │
-│  └──────────────────┬─────────────┘   │
-│                     │                 │
-│                     ↓                 │
-│  ┌────────────────────────────────┐   │
-│  │         @Service Layer         │   │
-│  │  • Business Logic              │   │
-│  │  • Authorization Rules         │   │
-│  │  • @Transactional              │   │
-│  └───────────────────┬────────────┘   │
-│                      │                │
-│                      ↓                │
-│  ┌────────────────────────────────┐   │
-│  │       @Repository Layer        │   │
-│  │  • Spring Data JPA             │   │
-│  │  • Custom Queries              │   │
-│  └───────────────────┬────────────┘   │
-│                      │                │
-└──────────────────────┼────────────────┘
-                       │
-                       ↓
-               ┌───────────────┐
-               │  PostgreSQL   │
-               │   Database    │
-               └───────────────┘
+```mermaid
+flowchart LR
+    FE[Frontend / API Client] --> SEC[Spring Security]
+    SEC --> CTRL[Controllers]
+    CTRL --> SVC[Services]
+    SVC --> REPO[Repositories]
+    REPO --> H2[(H2 — test)]
+    REPO --> DB[(Supabase PostgreSQL — production)]
 ```
 
-### Security Flow - OAuth2 + JWT
+The project follows a layered backend structure. In production, the API is hosted on Render.com and uses a Supabase PostgreSQL database. Locally, the `test` profile runs with an H2 in-memory database.
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                  Spring Boot Application                                │
-│  ┌──────────────────────┐          ┌────────────────────────────────┐   |
-│  │ Authorization Server │          │     Resource Server            │   |
-│  │   (SecurityChain)    │          │      (SecurityChain)           │   |
-│  └──────────────────────┘          └────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────┘
+- Controllers handle HTTP requests and responses
+- Services contain business rules and authorization checks
+- Repositories handle persistence with Spring Data JPA
+- Security is handled with Spring Security, OAuth2, and JWT
 
-PHASE 1: AUTHENTICATION (Get JWT Token)
-═══════════════════════════════════════════
+## Security Flow
 
-    ┌──────────┐                           ┌──────────────────────┐
-    │  Client  │                           │ Authorization Server │
-    └─────┬────┘                           └──────────┬───────────┘
-          │                                           │
-          │  1. POST /oauth2/token                    │
-          │     Content-Type: application/x-www-form-urlencoded
-          │                                           │
-          │     grant_type=password                   │
-          │     username=alex@gmail.com               │
-          │     password=123456                       │
-          │     client_id=myclientid                  │
-          │     client_secret=myclientsecret          │
-          ├──────────────────────────────────────────►│
-          │                                           │
-          │                             2. Validate Client Credentials
-          │                                - Check client_id & client_secret
-          │                                - BCrypt validation (client_secret)
-          │                                           │
-          │                             3. Validate User Credentials
-          │                                - Load user by username
-          │                                - BCrypt password check (line 76)
-          │                                - Load roles from database
-          │                                           │
-          │                             4. Generate JWT Token
-          │                                - Sign with RSA private key
-          │                                - Add claims: username, authorities
-          │                                - Set expiration (24h)
-          │                                           │
-          │  5. Return JWT Token                      │
-          │     {                                     │
-          │       "access_token": "eyJhbGc...",       │
-          │       "token_type": "Bearer",             │
-          │       "expires_in": 86400                 │
-          │     }                                     │
-          │◄──────────────────────────────────────────┤
-          │                                           │
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant AS as Authorization Server
+    participant RS as Resource Server
 
+    C->>AS: POST /oauth2/token
+    AS->>AS: Validate client credentials
+    AS->>AS: Validate user credentials
+    AS-->>C: Return JWT access token
 
-PHASE 2: AUTHORIZATION (Access Protected Resources)
-═══════════════════════════════════════════════════
-
-    ┌──────────┐                           ┌──────────────────────┐
-    │  Client  │                           │  Resource Server     │
-    └─────┬────┘                           └──────────┬───────────┘
-          │                                           │
-          │  6. GET /orders/123                       │
-          │     Authorization: Bearer {jwt-token}     │
-          ├──────────────────────────────────────────►│
-          │                                           │
-          │                             7. Validate JWT
-          │                                - Verify RSA signature (public key)
-          │                                - Check expiration time
-          │                                - Extract claims (username, authorities)
-          │                                           │
-          │                             8. Authorize Access
-          │                                - @PreAuthorize("hasRole('ADMIN')")
-          │                                - Business rules (ownership check)
-          │                                - Check if user owns the order
-          │                                           │
-          │  9a. Success: Return Order Data           │
-          │      { "id": 123, "total": 2500.00 }      │
-          │◄──────────────────────────────────────────┤
-          │                                           │
-          │  9b. Failure: 403 Forbidden               │
-          │      { "error": "Access denied" }         │
-          │◄──────────────────────────────────────────┤
-          │                                           │
+    C->>RS: Request with Bearer token
+    RS->>RS: Validate JWT
+    RS->>RS: Extract username and authorities
+    RS-->>C: Return protected resource
 ```
 
-### Entity Relationship Diagram
+Authentication is based on JWT access tokens issued by the authorization server.  
+Authorization combines endpoint-level role checks with business rules such as owner-or-admin access.
 
-```
-┌─────────────┐
-│   Category  │
-└──────┬──────┘
-       │ *
-       │ ManyToMany
-       │ *
-┌──────┴──────┐           ┌─────────────┐
-│   Product   │───────────│ OrderItem   │
-└─────────────┘     *   1 └──────┬──────┘
-                                 │ *
-                                 │ ManyToOne
-                                 │ 1
-                          ┌──────┴──────┐
-                          │    Order    │◄──────┐
-                          └──────┬──────┘       │
-                                 │ 1            │ OneToOne
-                                 │ ManyToOne    │
-                                 │ *            │
-                          ┌──────┴──────┐  ┌────┴────┐
-                          │    User     │  │ Payment │
-                          └──────┬──────┘  └─────────┘
-                                 │ *
-                                 │ ManyToMany
-                                 │ *
-                          ┌──────┴──────┐
-                          │    Role     │
-                          └─────────────┘
+## Domain Model
+
+```mermaid
+erDiagram
+    USER ||--o{ ORDER : places
+    ORDER ||--o| PAYMENT : has
+    ORDER ||--o{ ORDER_ITEM : contains
+    PRODUCT ||--o{ ORDER_ITEM : appears_in
+    PRODUCT }o--o{ CATEGORY : belongs_to
+    USER }o--o{ ROLE : has
 ```
 
----
+## Main Endpoints
 
-## 🚀 Getting Started
+### Public
 
-### Prerequisites
+- `POST /oauth2/token`
+- `GET /products`
+- `GET /products/{id}`
+- `GET /categories`
+- `POST /users/register`
 
-- **Java 21** or higher ([Download](https://adoptium.net/))
-- **Maven 3.8+** ([Download](https://maven.apache.org/download.cgi))
-- **PostgreSQL 15+** ([Download](https://www.postgresql.org/download/)) - Optional, can use H2 in-memory
+### Authenticated
 
-### Installation
+- `GET /users/me`
+- `PUT /users/me`
+- `GET /orders/{id}`
+- `POST /orders`
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/your-username/dscommerce.git
-   cd dscommerce
-   ```
+### Admin
 
-2. **Configure the database** (Optional - skip to use H2)
-   ```bash
-   # Edit src/main/resources/application-dev.yaml
-   # Update PostgreSQL connection settings
-   ```
+- `POST /products`
+- `PUT /products/{id}`
+- `DELETE /products/{id}`
+- `POST /categories`
+- `PUT /categories/{id}`
+- `DELETE /categories/{id}`
+- `GET /orders`
 
-3. **Run the application**
-   ```bash
-   ./mvnw spring-boot:run
-   ```
-
-4. **Access the application**
-   - API Base URL: `http://localhost:8080`
-   - H2 Console: `http://localhost:8080/h2-console` (profile: test)
-
-### Quick Start with Docker
-
-```bash
-# Build and run with Docker Compose
-docker-compose up -d
-
-# View logs
-docker-compose logs -f app
-
-# Stop
-docker-compose down
-```
-
----
-
-## 📚 API Documentation
-
-### Test Users
-
-| Email | Password | Roles |
-|-------|----------|-------|
-| `maria@gmail.com` | `123456` | ROLE_CLIENT |
-| `alex@gmail.com` | `123456` | ROLE_CLIENT, ROLE_ADMIN |
-
-### Authentication
-
-#### Login (Get JWT Token)
+## Example Authentication Request
 
 ```http
 POST /oauth2/token
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=password
-&username=alex@gmail.com
+&username=maria@gmail.com
 &password=123456
 &client_id=myclientid
 &client_secret=myclientsecret
 ```
 
-**Response:**
-```json
-{
-  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "token_type": "Bearer",
-  "expires_in": 86400
-}
+## Running Locally
+
+### Requirements
+
+- Java 21
+- Maven 3.8+
+- PostgreSQL, if you want to use the `dev` or `prod` profile
+
+### Default Profile
+
+The application uses the `test` profile by default:
+
+```yaml
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:test}
 ```
 
-### Public Endpoints (No Authentication Required)
+That means the project can start with H2 unless you explicitly choose another profile.
 
-#### List Products (Paginated)
-
-```http
-GET /products?page=0&size=10&name=laptop
-```
-
-**Response:**
-```json
-{
-  "content": [
-    {
-      "id": 1,
-      "name": "Laptop Dell Inspiron",
-      "price": 2500.00,
-      "imgUrl": "https://example.com/laptop.jpg"
-    }
-  ],
-  "pageable": {
-    "pageNumber": 0,
-    "pageSize": 10
-  },
-  "totalElements": 25,
-  "totalPages": 3
-}
-```
-
-#### Get Product Details
-
-```http
-GET /products/{id}
-```
-
-**Response:**
-```json
-{
-  "id": 1,
-  "name": "Laptop Dell Inspiron 15",
-  "description": "High-performance laptop with Intel i7 processor",
-  "price": 2500.00,
-  "imgUrl": "https://example.com/laptop.jpg",
-  "categories": [
-    {
-      "id": 2,
-      "name": "Electronics"
-    }
-  ]
-}
-```
-
-#### List Categories
-
-```http
-GET /categories
-```
-
-### Protected Endpoints - ADMIN Only
-
-#### Create Product
-
-```http
-POST /products
-Authorization: Bearer {token}
-Content-Type: application/json
-
-{
-  "name": "New Laptop",
-  "description": "Latest model with great specs",
-  "price": 3500.00,
-  "imgUrl": "https://example.com/new-laptop.jpg",
-  "categories": [{"id": 2}]
-}
-```
-
-**Response:** `201 Created`
-
-#### Update Product
-
-```http
-PUT /products/{id}
-Authorization: Bearer {token}
-Content-Type: application/json
-
-{
-  "name": "Updated Laptop",
-  "description": "Updated description",
-  "price": 3200.00,
-  "imgUrl": "https://example.com/updated.jpg",
-  "categories": [{"id": 2}]
-}
-```
-
-**Response:** `200 OK`
-
-#### Delete Product
-
-```http
-DELETE /products/{id}
-Authorization: Bearer {token}
-```
-
-**Response:** `204 No Content`
-
-### Protected Endpoints - Authenticated Users
-
-#### Get Current User
-
-```http
-GET /users/me
-Authorization: Bearer {token}
-```
-
-**Response:**
-```json
-{
-  "id": 2,
-  "name": "Alex Green",
-  "email": "alex@gmail.com",
-  "phone": "988888888",
-  "birthDate": "1987-12-13",
-  "roles": ["ROLE_CLIENT", "ROLE_ADMIN"]
-}
-```
-
-#### Get Order (Owner or Admin)
-
-```http
-GET /orders/{id}
-Authorization: Bearer {token}
-```
-
-**Response:**
-```json
-{
-  "id": 1,
-  "moment": "2024-01-15T10:30:00Z",
-  "status": "PAID",
-  "client": {
-    "id": 1,
-    "name": "Maria Brown"
-  },
-  "items": [
-    {
-      "productId": 1,
-      "name": "Laptop Dell",
-      "price": 2500.00,
-      "quantity": 1,
-      "subtotal": 2500.00
-    }
-  ],
-  "total": 2500.00
-}
-```
-
-#### Create Order
-
-```http
-POST /orders
-Authorization: Bearer {token}
-Content-Type: application/json
-
-{
-  "items": [
-    {
-      "productId": 1,
-      "quantity": 2
-    },
-    {
-      "productId": 3,
-      "quantity": 1
-    }
-  ]
-}
-```
-
-**Response:** `201 Created`
-
-### Error Responses
-
-#### 400 Bad Request (Validation Error)
-
-```json
-{
-  "timestamp": "2024-01-15T10:30:00Z",
-  "status": 400,
-  "error": "Validation error",
-  "path": "/products",
-  "errors": [
-    {
-      "fieldName": "name",
-      "message": "Campo obrigatório"
-    },
-    {
-      "fieldName": "description",
-      "message": "Descrição deve ter no mínimo 10 caracteres"
-    }
-  ]
-}
-```
-
-#### 401 Unauthorized (Missing/Invalid Token)
-
-```json
-{
-  "timestamp": "2024-01-15T10:30:00Z",
-  "status": 401,
-  "error": "Unauthorized",
-  "message": "Full authentication is required to access this resource",
-  "path": "/users/me"
-}
-```
-
-#### 403 Forbidden (Insufficient Permissions)
-
-```json
-{
-  "timestamp": "2024-01-15T10:30:00Z",
-  "status": 403,
-  "error": "Forbidden",
-  "message": "Access denied",
-  "path": "/orders/123"
-}
-```
-
-#### 404 Not Found (Resource Not Found)
-
-```json
-{
-  "timestamp": "2024-01-15T10:30:00Z",
-  "status": 404,
-  "error": "Resource not found",
-  "message": "Product not found",
-  "path": "/products/999"
-}
-```
-
----
-
-## 🧪 Testing the Production API
-
-### 🔗 Base URLs
-
-- **Production:** `https://project-spring-boot-dscommerce.onrender.com`
-- **Local:** `http://localhost:8080`
-
-### Quick Start Examples
-
-#### 1. Get all products (Public endpoint)
+### Run
 
 ```bash
-curl https://project-spring-boot-dscommerce.onrender.com/products
+./mvnw spring-boot:run
 ```
 
-#### 2. Get product by ID
+Otherwise:
 
 ```bash
-curl https://project-spring-boot-dscommerce.onrender.com/products/1
+mvn spring-boot:run
 ```
 
-#### 3. Login and get JWT token
+### Run with a Specific Profile
 
 ```bash
-curl -X POST https://project-spring-boot-dscommerce.onrender.com/oauth2/token \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "grant_type=password" \
-  -d "username=alex@gmail.com" \
-  -d "password=123456" \
-  -d "client_id=myclientid" \
-  -d "client_secret=myclientsecret"
+SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
 ```
 
-**Response:**
-```json
-{
-  "access_token": "eyJraWQiOiI5NGQzMjU4Ny0...",
-  "token_type": "Bearer",
-  "expires_in": 86400
-}
-```
+## Test Strategy
 
-#### 4. Get current user info (Authenticated endpoint)
+The repository includes tests for:
 
-```bash
-# Replace YOUR_TOKEN with the access_token from step 3
-curl https://project-spring-boot-dscommerce.onrender.com/users/me \
-  -H "Authorization: Bearer YOUR_TOKEN"
-```
+- repository layer
+- service layer
+- controller layer
 
-#### 5. Create a new order (Authenticated endpoint)
+At the moment, the test suite still needs refinement to improve execution consistency in the current local JDK 21 environment, especially around Mockito setup.
 
-```bash
-curl -X POST https://project-spring-boot-dscommerce.onrender.com/orders \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "items": [
-      {"productId": 1, "quantity": 2},
-      {"productId": 3, "quantity": 1}
-    ]
-  }'
-```
+## Frontend Repository
 
-#### 6. Create a product (ADMIN only)
+A separate frontend repository was created to provide a visual client for the API:
 
-```bash
-# Login as admin (alex@gmail.com) first, then use the token
-curl -X POST https://project-spring-boot-dscommerce.onrender.com/products \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "New Gaming Laptop",
-    "description": "High-performance gaming laptop with RTX 4080",
-    "price": 5500.00,
-    "imgUrl": "https://example.com/gaming-laptop.jpg",
-    "categories": [{"id": 2}]
-  }'
-```
+[dscommerce-frontend](https://github.com/mateusribeirocampos/dscommerce-frontend)
 
-### 📊 Sample Data
+The backend remains the main focus of this portfolio project.
 
-The production database is pre-populated with test data:
+## Notes and Tradeoffs
 
-#### 👥 Users
-
-| ID  | Name        | Email             | Password | Roles         |
-| --- | ----------- | ----------------- | -------- | ------------- |
-| 1   | Maria Brown | maria@gmail.com   | 123456   | CLIENT        |
-| 2   | Alex Green  | alex@gmail.com    | 123456   | CLIENT, ADMIN |
-
-#### 📂 Categories
-
-| ID  | Name        |
-| --- | ----------- |
-| 1   | Livros      |
-| 2   | Eletrônicos |
-| 3   | Computadores|
-
-#### 🛍️ Products
-
-| ID  | Name                  | Price     | Categories   |
-| --- | --------------------- | --------- | ------------ |
-| 1   | The Lord of the Rings | $90.50    | Livros       |
-| 2   | Smart TV              | $2,190.00 | Eletrônicos  |
-| 3   | Macbook Pro           | $1,250.00 | Computadores |
-
----
-
-## 🛠️ Tech Stack
-
-### Core Technologies
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **Java** | 21 (LTS) | Programming language |
-| **Spring Boot** | 3.4.3 | Application framework |
-| **Spring Security** | 6.2.x | Authentication & Authorization |
-| **Spring Data JPA** | 3.2.x | Data persistence |
-| **Maven** | 3.8+ | Dependency management |
-
-### Security
-
-| Technology | Purpose |
-|------------|---------|
-| **OAuth2** | Authorization framework |
-| **JWT** | Stateless authentication tokens |
-| **BCrypt** | Password hashing algorithm |
-| **RSA** | Token signature algorithm |
-
-### Database
-
-| Technology | Environment | Purpose |
-|------------|-------------|---------|
-| **PostgreSQL** | Production, Development | Primary database |
-| **H2** | Test | In-memory database for testing |
-
-### Additional Libraries
-
-| Library | Purpose |
-|---------|---------|
-| **Bean Validation** | Data validation |
-| **Jackson** | JSON serialization/deserialization |
-| **Lombok** | Reduce boilerplate code |
-| **Hibernate** | ORM implementation |
-
----
-
-## 📁 Project Structure
-
-```
-src/
-├── main/
-│   ├── java/com/dscommerce/
-│   │   ├── config/
-│   │   │   ├── AuthorizationServerConfig.java    # OAuth2 Authorization Server
-│   │   │   ├── ResourceServerConfig.java         # OAuth2 Resource Server
-│   │   │   └── customgrant/                      # Custom Password Grant Type
-│   │   │       ├── CustomPasswordAuthenticationConverter.java
-│   │   │       ├── CustomPasswordAuthenticationProvider.java  # ⭐ BCrypt validation (line 76)
-│   │   │       ├── CustomPasswordAuthenticationToken.java
-│   │   │       └── CustomUserAuthorities.java
-│   │   │
-│   │   ├── controllers/
-│   │   │   ├── ProductController.java            # Product endpoints
-│   │   │   ├── CategoryController.java           # Category endpoints
-│   │   │   ├── OrderController.java              # Order endpoints
-│   │   │   ├── UserController.java               # User endpoints
-│   │   │   └── exceptions/
-│   │   │       ├── handler/
-│   │   │       │   └── ResourceExceptionHandler.java  # Global exception handler
-│   │   │       ├── StandardError.java
-│   │   │       ├── ValidationError.java
-│   │   │       ├── CustomError.java
-│   │   │       └── FieldMessage.java
-│   │   │
-│   │   ├── services/
-│   │   │   ├── ProductService.java               # Product business logic
-│   │   │   ├── CategoryService.java              # Category business logic
-│   │   │   ├── OrderService.java                 # Order business logic + authorization
-│   │   │   ├── UserService.java                  # UserDetailsService implementation
-│   │   │   ├── AuthService.java                  # Authorization utilities
-│   │   │   └── exceptions/
-│   │   │       ├── ResourceNotFoundException.java
-│   │   │       ├── DatabaseException.java
-│   │   │       └── ForbiddenException.java
-│   │   │
-│   │   ├── repositories/
-│   │   │   ├── ProductRepository.java            # Spring Data JPA + custom queries
-│   │   │   ├── CategoryRepository.java
-│   │   │   ├── OrderRepository.java
-│   │   │   ├── OrderItemRepository.java
-│   │   │   └── UserRepository.java               # Native query for roles
-│   │   │
-│   │   ├── entities/
-│   │   │   ├── Product.java                      # Product entity
-│   │   │   ├── Category.java                     # Category entity
-│   │   │   ├── User.java                         # User entity (implements UserDetails)
-│   │   │   ├── Role.java                         # Role entity (implements GrantedAuthority)
-│   │   │   ├── Order.java                        # Order entity
-│   │   │   ├── OrderItem.java                    # OrderItem entity (composite key)
-│   │   │   ├── Payment.java                      # Payment entity
-│   │   │   ├── pk/
-│   │   │   │   └── OrderItemPK.java              # Composite primary key
-│   │   │   └── enums/
-│   │   │       └── OrderStatus.java              # Order status enum
-│   │   │
-│   │   ├── dto/
-│   │   │   ├── ProductDTO.java                   # Product DTO (with validation)
-│   │   │   ├── ProductMinDTO.java                # Minimal product DTO
-│   │   │   ├── CategoryDTO.java                  # Category DTO
-│   │   │   ├── UserDTO.java                      # User DTO
-│   │   │   ├── ClientDTO.java                    # Minimal client DTO
-│   │   │   ├── OrderDTO.java                     # Order DTO (nested DTOs)
-│   │   │   ├── OrderItemDTO.java                 # Order item DTO
-│   │   │   └── PaymentDTO.java                   # Payment DTO
-│   │   │
-│   │   └── projections/
-│   │       └── UserDetailsProjection.java        # Projection for user + roles query
-│   │
-│   └── resources/
-│       ├── application.yaml                      # Main configuration
-│       ├── application-dev.yaml                  # Development profile
-│       ├── application-test.yaml                 # Test profile (H2)
-│       ├── application-prod.yaml                 # Production profile
-│       └── import.sql                            # Test data seeding
-│
-└── test/
-    └── java/com/dscommerce/
-        └── DscommerceApplicationTests.java
-```
-
----
-
-## 🎓 Concepts Demonstrated
-
-This project showcases advanced Spring Boot concepts and best practices:
-
-### Architecture Patterns
-- ✅ **Layered Architecture** - Clear separation between Controller, Service, and Repository
-- ✅ **DTO Pattern** - Entity-DTO conversion to decouple API from domain model
-- ✅ **Repository Pattern** - Data access abstraction with Spring Data JPA
-- ✅ **Dependency Injection** - Loose coupling through @Autowired
-
-### Spring Security
-- ✅ **OAuth2 Authorization Server** - Custom implementation
-- ✅ **OAuth2 Resource Server** - JWT token validation
-- ✅ **UserDetails Contract** - User implements UserDetails interface
-- ✅ **GrantedAuthority Contract** - Role implements GrantedAuthority interface
-- ✅ **Custom Grant Type** - Password grant built from scratch
-- ✅ **Method Security** - @PreAuthorize for fine-grained authorization
-- ✅ **BCrypt** - Secure password hashing
-
-### Spring Data JPA
-- ✅ **Entity Relationships** - ManyToMany, OneToMany, ManyToOne, OneToOne
-- ✅ **Composite Keys** - @EmbeddedId with OrderItemPK
-- ✅ **Custom Queries** - @Query with JPQL and native SQL
-- ✅ **Projections** - Interface-based projections for specific queries
-- ✅ **Pagination** - Pageable and Page<T> for efficient data retrieval
-
-### RESTful Best Practices
-- ✅ **HTTP Semantics** - Correct use of GET, POST, PUT, DELETE
-- ✅ **Status Codes** - 200, 201, 204, 400, 401, 403, 404, 422, 500
-- ✅ **Pagination** - Pageable endpoints for large datasets
-- ✅ **HATEOAS** - URI in Location header for created resources
-- ✅ **Content Negotiation** - JSON responses
-
-### Validation & Error Handling
-- ✅ **Bean Validation** - @NotBlank, @Size, @PositiveOrZero, etc.
-- ✅ **@RestControllerAdvice** - Centralized exception handling
-- ✅ **Custom Exceptions** - Domain-specific exceptions
-- ✅ **Validation Errors** - Field-level error messages
-
----
-
-## 📊 Project Metrics
-
-- **Total Commits:** 33 (well-organized and semantic)
-- **Entities:** 8 (Product, Category, User, Role, Order, OrderItem, Payment, OrderStatus)
-- **DTOs:** 8 (with validation and nested relationships)
-- **REST Endpoints:** ~20 endpoints
-- **Lines of Code:** ~2,700 lines of Java
-- **Test Coverage:** 100% of planned features implemented
-
----
-
-## 🔐 Security Features
-
-### Authentication Flow
-1. User sends credentials to `/oauth2/token`
-2. Server validates with BCrypt
-3. Server generates JWT signed with RSA private key
-4. Client receives token (24h validity)
-5. Client includes token in `Authorization: Bearer {token}` header
-6. Server validates token with RSA public key
-7. Server extracts user + roles from token (stateless)
-
-### Authorization Rules
-
-| Endpoint | Role Required | Business Rule |
-|----------|---------------|---------------|
-| `GET /products` | None | Public access |
-| `POST /products` | ADMIN | Only admins can create |
-| `PUT /products/{id}` | ADMIN | Only admins can update |
-| `DELETE /products/{id}` | ADMIN | Only admins can delete |
-| `GET /users/me` | Authenticated | Any logged-in user |
-| `GET /orders/{id}` | Owner or ADMIN | Users see only their orders |
-| `POST /orders` | Authenticated | Any logged-in user can order |
-
-### Security Best Practices
-- ✅ Passwords never stored in plain text (BCrypt)
-- ✅ JWT tokens signed with RSA (asymmetric encryption)
-- ✅ Stateless authentication (no server-side sessions)
-- ✅ Role-based access control (RBAC)
-- ✅ Method-level security (@PreAuthorize)
-- ✅ CORS configured for specific origins
-- ✅ CSRF disabled (appropriate for stateless API)
-
----
-
-## 🚧 Roadmap
-
-### Completed ✅
-- [x] OAuth2 + JWT authentication
-- [x] Role-based authorization
-- [x] CRUD operations for all entities
-- [x] Exception handling
-- [x] Bean validation
-- [x] Pagination
-- [x] Docker support
-- [x] Multi-profile configuration
-
-### In Progress 🔄
-- [ ] Swagger/OpenAPI documentation
-- [ ] Unit tests (target: 70%+ coverage)
-- [ ] Integration tests
-- [ ] CI/CD with GitHub Actions
-
-### Planned 📅
-- [ ] Refresh tokens
-- [ ] Rate limiting
-- [ ] Caching with Redis
-- [ ] Observability (metrics, logs)
-- [ ] Health checks
-- [ ] API versioning
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👤 Author
-
-**Mateus Ribeiro de Campos**
-
-- LinkedIn: [Mateus Ribeiro de Campos](https://www.linkedin.com/in/mateus-ribeiro-de-campos-6a135331/)
-- GitHub: [@mateusribeirocampos](https://github.com/mateusribeirocampos)
-
----
-
-## 🎓 Credits
-
-This project was developed as part of the **Spring Boot Professional Course** by **Professor Nelio Alves** at [DevSuperior](https://devsuperior.com.br/).
-
-The course covers professional-level Spring Boot development, including:
-- RESTful API design
-- Spring Security with OAuth2 and JWT
-- JPA/Hibernate advanced topics
-- Clean Architecture
-- Exception handling
-- Bean Validation
-
----
-
-## 🙏 Acknowledgments
-
-- [DevSuperior](https://devsuperior.com.br/) - For the excellent Spring Boot course
-- [Spring Framework Team](https://spring.io/team) - For the amazing framework
-- [Baeldung](https://www.baeldung.com/) - For comprehensive Spring tutorials
-
----
-
-## 📖 Additional Resources
-
-- [Complete Technical Documentation](docs/TECHNICAL.md)
-- [API Testing Collection](docs/api-collection.json)
-- [Database Schema](docs/database-schema.md)
-- [Deployment Guide](docs/DEPLOYMENT.md)
-
----
-
-<div align="center">
-
-**⭐ If this project helped you, please consider giving it a star!**
-
-Made with ❤️ and ☕ by **Mateus Campos**
-
-</div>
+- This project is primarily a backend portfolio and study project
+- The custom password grant flow was implemented for learning purposes
+- Some security and token-generation decisions were simplified for educational scope
+- The frontend is complementary and not the main evaluation target for this repository
