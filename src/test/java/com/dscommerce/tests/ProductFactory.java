@@ -1,6 +1,7 @@
 package com.dscommerce.tests;
 
 import com.dscommerce.dto.ProductDTO;
+import com.dscommerce.dto.ProductMinDTO;
 import com.dscommerce.entities.Category;
 import com.dscommerce.entities.Product;
 
