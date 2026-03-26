@@ -1,12 +1,58 @@
 # DSCommerce - Spring Boot E-commerce Backend
 
-A backend-focused e-commerce API built with Spring Boot, designed to demonstrate secure authentication and authorization, role-based access control, layered architecture, JPA entity relationships, validation, exception handling, and production-oriented deployment.
+![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4-6DB33F?logo=springboot&logoColor=white)
+![Spring Security](https://img.shields.io/badge/Spring_Security-Secured-6DB33F?logo=springsecurity&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-Auth-black?logo=jsonwebtokens&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql&logoColor=white)
+![H2](https://img.shields.io/badge/H2-InMemory_DB-09476B?logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Production_DB-3ECF8E?logo=supabase&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-Build-C71A36?logo=apachemaven&logoColor=white)
+![JUnit 5](https://img.shields.io/badge/JUnit_5-Tests-25A162?logo=junit5&logoColor=white)
+![Mockito](https://img.shields.io/badge/Mockito-Mocking-78A641?logoColor=white)
+![Render](https://img.shields.io/badge/Render-Deploy-000000?logo=render&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI/CD-2088FF?logo=githubactions&logoColor=white)
+![Resend](https://img.shields.io/badge/Resend-Email_API-black?logo=resend&logoColor=white)
+
+A backend-focused e-commerce API built with Spring Boot, designed to showcase secure authentication and authorization, role-based access control, layered architecture, JPA entity relationships, validation, exception handling, automated tests, and production-oriented deployment.
 
 This is the main backend project in my portfolio and reflects my focus on building secure, maintainable RESTful APIs with Java and Spring Boot.
 
-**Live API:** https://project-spring-boot-dscommerce.onrender.com/
+**Live API:** https://project-spring-boot-dscommerce.onrender.com/  
+**Frontend client:** [dscommerce-frontend](https://github.com/mateusribeirocampos/dscommerce-frontend)
 
-A separate frontend is available as a visual client for the API: [dscommerce-frontend](https://github.com/mateusribeirocampos/dscommerce-frontend)
+---
+
+## Overview
+
+DSCommerce is a RESTful backend for an e-commerce domain, covering core business entities such as users, roles, products, categories, orders, payments, and order items.
+
+The project emphasizes:
+
+- secure API access with JWT-based authentication
+- role-based authorization for protected resources
+- layered backend architecture
+- JPA domain modeling and entity relationships
+- validation and centralized exception handling
+- environment-based configuration for local and production usage
+- deployment to a cloud environment with PostgreSQL
+
+---
+
+## Key Features
+
+- JWT-based authentication and authorization
+- Role-based access control (public, authenticated, and admin routes)
+- OAuth2 Authorization Server integration
+- Layered architecture with Controllers, Services, and Repositories
+- JPA/Hibernate mapping for a relational e-commerce domain
+- Validation and consistent error handling
+- H2 profile for local/test execution
+- PostgreSQL in production
+- Deployed API running on Render
+- Separate frontend client consuming the backend API
+
+---
 
 ## Tech Stack
 
@@ -16,11 +62,14 @@ A separate frontend is available as a visual client for the API: [dscommerce-fro
 - OAuth2 Authorization Server
 - JWT
 - Spring Data JPA
+- Hibernate
 - PostgreSQL
-- H2 (local/test profile)
+- H2
 - Maven
 - Supabase (production database)
 - Render.com (cloud hosting)
+
+---
 
 ## Architecture
 
@@ -30,18 +79,20 @@ flowchart LR
     SEC --> CTRL[Controllers]
     CTRL --> SVC[Services]
     SVC --> REPO[Repositories]
-    REPO --> H2[(H2 - test)]
+    REPO --> H2[(H2 - local/test)]
     REPO --> DB[(Supabase PostgreSQL - production)]
 ```
 
-The project follows a layered backend architecture with clear separation of concerns.
+The project follows a layered backend architecture with clear separation of concerns:
 
 - **Controllers** handle HTTP requests and responses
 - **Services** encapsulate business rules and authorization checks
 - **Repositories** manage persistence with Spring Data JPA
 - **Security** is implemented with Spring Security, OAuth2, and JWT
 
-In production, the API is deployed on Render.com and connected to a Supabase PostgreSQL database. Locally, the `test` profile uses an H2 in-memory database for simplified execution and testing.
+In production, the API is deployed on Render and connected to a Supabase PostgreSQL database. Locally, the `test` profile uses an H2 in-memory database for simplified execution and testing.
+
+---
 
 ## Security Flow
 
@@ -62,8 +113,11 @@ sequenceDiagram
     RS-->>C: Return protected resource
 ```
 
-Authentication is based on JWT access tokens issued by the authorization server.  
+Authentication is based on JWT access tokens issued by the authorization server.
+
 Authorization combines endpoint-level role checks with business rules such as owner-or-admin access.
+
+---
 
 ## Domain Model
 
@@ -77,9 +131,11 @@ erDiagram
     USER }o--o{ ROLE : has
 ```
 
-## Main Endpoints
+---
 
-### Public
+## API Overview
+
+### Public Endpoints
 
 - `POST /oauth2/token`
 - `GET /products`
@@ -87,14 +143,14 @@ erDiagram
 - `GET /categories`
 - `POST /users/register`
 
-### Authenticated
+### Authenticated Endpoints
 
 - `GET /users/me`
 - `PUT /users/me`
 - `GET /orders/{id}`
 - `POST /orders`
 
-### Admin
+### Admin Endpoints
 
 - `POST /products`
 - `PUT /products/{id}`
@@ -103,6 +159,8 @@ erDiagram
 - `PUT /categories/{id}`
 - `DELETE /categories/{id}`
 - `GET /orders`
+
+---
 
 ## Example Authentication Request
 
@@ -116,6 +174,8 @@ grant_type=password
 &client_id=myclientid
 &client_secret=myclientsecret
 ```
+
+---
 
 ## Running Locally
 
@@ -135,15 +195,17 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:test}
 ```
 
-That means the project can start with H2 unless you explicitly choose another profile.
+This means the project can start with H2 unless another profile is explicitly selected.
 
-### Run
+### Run the Application
+
+Using Maven Wrapper:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-Or:
+Or using Maven directly:
 
 ```bash
 mvn spring-boot:run
@@ -155,7 +217,9 @@ mvn spring-boot:run
 SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
 ```
 
-## Test Strategy
+---
+
+## Testing
 
 The repository includes automated tests covering:
 
@@ -163,7 +227,26 @@ The repository includes automated tests covering:
 - service layer
 - controller layer
 
-The test suite is being continuously refined to improve consistency and maintainability in the current Java 21 environment.
+Main testing tools used in the project include:
+
+- JUnit 5
+- Mockito
+- Spring Boot Test
+- MockMvc
+
+The test suite is continuously being refined to improve consistency and maintainability in the current Java 21 environment.
+
+---
+
+## Frontend Integration
+
+A separate frontend repository is available to provide a visual client for the API:
+
+[dscommerce-frontend](https://github.com/mateusribeirocampos/dscommerce-frontend)
+
+The backend remains the main focus of this portfolio project.
+
+---
 
 ## Design Notes
 
@@ -172,6 +255,17 @@ The test suite is being continuously refined to improve consistency and maintain
 - Some authentication and token-related decisions were simplified compared to a full enterprise IAM solution
 - The frontend is complementary and serves as a client for API interaction
 
+---
+
 ## Project Evolution
 
 This project was initially inspired by coursework from the DevSuperior Spring Boot Professional program and later evolved into a broader portfolio backend through additional implementation, integration of new features, documentation improvements, testing efforts, and production deployment.
+
+---
+
+## Author
+
+**Mateus Ribeiro de Campos**  
+[![GitHub](https://img.shields.io/badge/GitHub-mateusribeirocampos-181717?logo=github&logoColor=white)](https://github.com/mateusribeirocampos)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Mateus_Ribeiro_de_Campos-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/mateus-ribeiro-de-campos-6a135331/)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Visit-111111?logo=vercel&logoColor=white)](https://portfolio-mateusribeirocampos.vercel.app/)
