@@ -1,9 +1,8 @@
 # DSCommerce - Spring Boot E-commerce Backend
 
-A backend-focused e-commerce API built with Spring Boot.
-This project highlights authentication and authorization with JWT, role-based access control, layered architecture, JPA entity relationships, validation, and exception handling.
+A backend-focused e-commerce API built with Spring Boot, designed to demonstrate secure authentication and authorization, role-based access control, layered architecture, JPA entity relationships, validation, exception handling, and production-oriented deployment.
 
-It is the main backend project in my portfolio and was originally developed during the DevSuperior Spring Boot Professional course, then expanded and refined through additional implementation, testing, and deployment work.
+This is the main backend project in my portfolio and reflects my focus on building secure, maintainable RESTful APIs with Java and Spring Boot.
 
 **Live API:** https://project-spring-boot-dscommerce.onrender.com/
 
@@ -18,7 +17,7 @@ A separate frontend is available as a visual client for the API: [dscommerce-fro
 - JWT
 - Spring Data JPA
 - PostgreSQL
-- H2
+- H2 (local/test profile)
 - Maven
 - Supabase (production database)
 - Render.com (cloud hosting)
@@ -31,16 +30,18 @@ flowchart LR
     SEC --> CTRL[Controllers]
     CTRL --> SVC[Services]
     SVC --> REPO[Repositories]
-    REPO --> H2[(H2 — test)]
-    REPO --> DB[(Supabase PostgreSQL — production)]
+    REPO --> H2[(H2 - test)]
+    REPO --> DB[(Supabase PostgreSQL - production)]
 ```
 
-The project follows a layered backend structure. In production, the API is hosted on Render.com and uses a Supabase PostgreSQL database. Locally, the `test` profile runs with an H2 in-memory database.
+The project follows a layered backend architecture with clear separation of concerns.
 
-- Controllers handle HTTP requests and responses
-- Services contain business rules and authorization checks
-- Repositories handle persistence with Spring Data JPA
-- Security is handled with Spring Security, OAuth2, and JWT
+- **Controllers** handle HTTP requests and responses
+- **Services** encapsulate business rules and authorization checks
+- **Repositories** manage persistence with Spring Data JPA
+- **Security** is implemented with Spring Security, OAuth2, and JWT
+
+In production, the API is deployed on Render.com and connected to a Supabase PostgreSQL database. Locally, the `test` profile uses an H2 in-memory database for simplified execution and testing.
 
 ## Security Flow
 
@@ -142,7 +143,7 @@ That means the project can start with H2 unless you explicitly choose another pr
 ./mvnw spring-boot:run
 ```
 
-Otherwise:
+Or:
 
 ```bash
 mvn spring-boot:run
@@ -156,25 +157,21 @@ SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
 
 ## Test Strategy
 
-The repository includes tests for:
+The repository includes automated tests covering:
 
 - repository layer
 - service layer
 - controller layer
 
-At the moment, the test suite still needs refinement to improve execution consistency in the current local JDK 21 environment, especially around Mockito setup.
+The test suite is being continuously refined to improve consistency and maintainability in the current Java 21 environment.
 
-## Frontend Repository
+## Design Notes
 
-A separate frontend repository was created to provide a visual client for the API:
+- This project prioritizes backend architecture, security, and API design
+- The custom password grant flow was kept for learning and portfolio purposes
+- Some authentication and token-related decisions were simplified compared to a full enterprise IAM solution
+- The frontend is complementary and serves as a client for API interaction
 
-[dscommerce-frontend](https://github.com/mateusribeirocampos/dscommerce-frontend)
+## Project Evolution
 
-The backend remains the main focus of this portfolio project.
-
-## Notes and Tradeoffs
-
-- This project is primarily a backend portfolio and study project
-- The custom password grant flow was implemented for learning purposes
-- Some security and token-generation decisions were simplified for educational scope
-- The frontend is complementary and not the main evaluation target for this repository
+This project was initially inspired by coursework from the DevSuperior Spring Boot Professional program and later evolved into a broader portfolio backend through additional implementation, integration of new features, documentation improvements, testing efforts, and production deployment.
