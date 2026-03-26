@@ -20,6 +20,11 @@ public class ProductFactory {
     return new ProductDTO(product);
   }
 
+  public static ProductMinDTO createProductMinDTO() {
+    Product product = createProduct();
+    return new ProductMinDTO(product);
+  }
+
   public static Category createCategory() {
     return new Category(2L, "Electronics");
   }
