@@ -18,8 +18,10 @@ A backend-focused e-commerce API built with Spring Boot, designed to showcase se
 
 This is the main backend project in my portfolio and reflects my focus on building secure, maintainable RESTful APIs with Java and Spring Boot.
 
-**Live API:** https://project-spring-boot-dscommerce.onrender.com/  
-**Frontend client:** [dscommerce-frontend](https://github.com/mateusribeirocampos/dscommerce-frontend)
+**Live API:** https://project-spring-boot-dscommerce.onrender.com/
+**Frontend demo:** [dscommerce-frontend.vercel.app](https://dscommerce-frontend.vercel.app/) — ([GitHub repo](https://github.com/mateusribeirocampos/dscommerce-frontend))
+
+![DSCommerce](https://img.shields.io/badge/DSCommerce-FF5500?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8Y2lyY2xlIGN4PSIzNSIgY3k9Ijc1IiByPSI4IiBmaWxsPSJ3aGl0ZSIvPgogIDxjaXJjbGUgY3g9IjcwIiBjeT0iNzUiIHI9IjgiIGZpbGw9IndoaXRlIi8+CiAgPHBhdGggZD0iTTIwIDI1aDEwbDggMzVoMzJsMTAtMjVINDIiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPg==&logoColor=white)
 
 ---
 
@@ -177,6 +179,14 @@ grant_type=password
 
 ---
 
+## Production Notes
+
+- Deployed on [Render](https://render.com)
+- Supabase PostgreSQL as production database
+- Separate frontend client available at [dscommerce-frontend.vercel.app](https://dscommerce-frontend.vercel.app/) for integration and demo
+
+---
+
 ## Running Locally
 
 ### Requirements
@@ -242,7 +252,8 @@ The test suite is continuously being refined to improve consistency and maintain
 
 A separate frontend repository is available to provide a visual client for the API:
 
-[dscommerce-frontend](https://github.com/mateusribeirocampos/dscommerce-frontend)
+- **Live demo:** [dscommerce-frontend.vercel.app](https://dscommerce-frontend.vercel.app/)
+- **GitHub:** [mateusribeirocampos/dscommerce-frontend](https://github.com/mateusribeirocampos/dscommerce-frontend)
 
 The backend remains the main focus of this portfolio project.
 
