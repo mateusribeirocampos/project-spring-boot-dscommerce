@@ -231,11 +231,11 @@ SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
 
 ## Testing
 
-The repository includes automated tests covering:
+The test suite covers three layers:
 
-- repository layer
-- service layer
-- controller layer
+- **Repository** — `@DataJpaTest` with H2 (query validation)
+- **Service** — `@ExtendWith(MockitoExtension.class)` (business logic isolation)
+- **Controller** — `@WebMvcTest` (HTTP behavior, validation, exception handling)
 
 Main testing tools used in the project include:
 

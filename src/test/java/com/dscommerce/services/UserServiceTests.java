@@ -2,6 +2,7 @@ package com.dscommerce.services;
 
 import com.dscommerce.dto.UserDTO;
 import com.dscommerce.dto.UserInsertDTO;
+import com.dscommerce.dto.UserUpdateDTO;
 import com.dscommerce.entities.Role;
 import com.dscommerce.entities.User;
 import com.dscommerce.repositories.RoleRepository;
@@ -33,6 +34,7 @@ public class UserServiceTests {
     private String existingEmail, nonExistingEmail, passwordMock;
     private User user;
     private UserInsertDTO userInsertDTO;
+    private UserUpdateDTO userUpdateDTO;
 
     @InjectMocks
     private UserService userService;
@@ -53,6 +55,7 @@ public class UserServiceTests {
         passwordMock = "12345678";
         user = UserFactory.createUser();
         userInsertDTO = UserFactory.createUserInsertDTO();
+        userUpdateDTO = UserFactory.updateUserDTO();
 
         var jwt = Jwt.withTokenValue("token")
                 .header("alg", "RS256")
@@ -115,5 +118,25 @@ public class UserServiceTests {
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(existingEmail, result.getEmail());
+    }
+
+    @Test
+    public void updateMeShouldReturnUserUpdateWhenDataIsValid() {
+        Mockito.when(userRepository.findByEmail(existingEmail)).thenReturn(user);
+
+        UserDTO result = userService.updateMe(userUpdateDTO);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("Maria White", result.getName());
+        Assertions.assertEquals("mariawhite@gmail.com", result.getEmail());
+    }
+
+    @Test
+    public void updateMeShouldReturnUsernameNotFoundExceptionWhenDataDoesNotValid() {
+        SecurityContextHolder.clearContext();
+
+        Assertions.assertThrows(UsernameNotFoundException.class, () -> {
+            userService.updateMe(userUpdateDTO);
+        });
     }
 }
