@@ -66,7 +66,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void getMeShouldReturnUserDTOWhenUserExist() throws Exception {
+    public void getMeShouldReturnUserDTOWhenUserExists() throws Exception {
         when(userService.getMe()).thenReturn(userDTO);
 
         ResultActions result =

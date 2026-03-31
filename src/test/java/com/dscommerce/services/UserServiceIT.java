@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserServiceIT {
 
-    private String existingEmail, nonExistingEmail, usernameAdmin;
+    private String existingEmail, nonExistingEmail;
     private Long countTotalUsers;
 
     @Autowired
@@ -63,7 +63,7 @@ public class UserServiceIT {
     }
 
     @Test
-    public void registerShouldReturnDataIntegrityViolationWhenEmailAlreadyExist() {
+    public void registerShouldReturnDataIntegrityViolationWhenEmailAlreadyExists() {
         UserInsertDTO dto = UserFactory.createUserInsertDTO();
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
             userService.register(dto);
@@ -71,7 +71,7 @@ public class UserServiceIT {
     }
 
     @Test
-    public void loadUserByUsernameShouldReturnUserDetailsWhenUserExist() {
+    public void loadUserByUsernameShouldReturnUserDetailsWhenUserExists() {
         UserDetails result = userService.loadUserByUsername(existingEmail);
         Assertions.assertNotNull(result);
         Assertions.assertEquals(result.getUsername(), existingEmail);

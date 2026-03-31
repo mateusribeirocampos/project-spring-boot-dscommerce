@@ -37,7 +37,7 @@ public class ProductRepositoryTests {
     }
 
     @Test
-    public void deleteShouldDeleteObjectWhenIdDoesNotExist() {
+    public void deleteShouldDeleteObjectWhenIdDoesNotExists() {
 
         Assertions.assertDoesNotThrow(() -> productRepository.deleteById(nonExistingId));
     }

@@ -98,7 +98,7 @@ public class ProductServiceTests {
     }
 
     @Test
-    public void updateShoutReturnNotNullWhenIdExist() {
+    public void updateShoutReturnNotNullWhenIdExists() {
         Mockito.when(productRepository.getReferenceById(exitingId)).thenReturn(product);
         Mockito.when(productRepository.save(any())).thenReturn(product);
         Mockito.when(categoryRepository.getReferenceById(any())).thenReturn(ProductFactory.createCategory());
@@ -111,7 +111,7 @@ public class ProductServiceTests {
     }
 
     @Test
-    public void updateShouldReturnExceptionWhenIdDoesNotExist() {
+    public void updateShouldReturnExceptionWhenIdDoesNotExists() {
         Mockito.when(productRepository.getReferenceById(nonExistingId)).thenThrow(EntityNotFoundException.class);
 
         Assertions.assertThrows(ResourceNotFoundException.class, () -> {
@@ -120,7 +120,7 @@ public class ProductServiceTests {
     }
 
     @Test
-    public void deleteShouldReturnNothingWhenIdExist() {
+    public void deleteShouldReturnNothingWhenIdExists() {
         Mockito.when(productRepository.existsById(exitingId)).thenReturn(true);
 
         Assertions.assertDoesNotThrow(() -> {
@@ -139,7 +139,7 @@ public class ProductServiceTests {
     }
 
     @Test
-    public void deleteShouldReturnResourceNotFoundExceptionWhenIdDoesNotExist() {
+    public void deleteShouldReturnResourceNotFoundExceptionWhenIdDoesNotExists() {
         Mockito.when(productRepository.existsById(nonExistingId)).thenReturn(false);
 
         Assertions.assertThrows(ResourceNotFoundException.class, () -> {
