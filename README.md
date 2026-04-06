@@ -1,5 +1,6 @@
 # DSCommerce - Spring Boot E-commerce Backend
 
+![CI](https://github.com/mateusribeirocampos/project-spring-boot-dscommerce/actions/workflows/ci.yaml/badge.svg)
 ![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4-6DB33F?logo=springboot&logoColor=white)
 ![Spring Security](https://img.shields.io/badge/Spring_Security-Secured-6DB33F?logo=springsecurity&logoColor=white)
