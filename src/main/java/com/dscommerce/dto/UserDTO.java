@@ -1,6 +1,7 @@
 package com.dscommerce.dto;
 
 import com.dscommerce.entities.User;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,6 +18,8 @@ public class UserDTO {
     @NotBlank(message = "Name cannot be empty")
     private String name;
 
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Invalid email format")
     private String email;
     private String phone;
     private LocalDate birthDate;
