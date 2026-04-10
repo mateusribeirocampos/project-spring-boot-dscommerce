@@ -25,6 +25,14 @@ public class ProductFactory {
     return new ProductMinDTO(product);
   }
 
+  public static ProductDTO updateProductDTO() {
+    Product product = createProduct();
+    product.setName("PC Gamer ZZ");
+    product.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit");
+    product.setPrice(1400.0);
+    return new ProductDTO(product);
+  }
+
   public static Category createCategory() {
     return new Category(2L, "Electronics");
   }

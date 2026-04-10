@@ -91,6 +91,7 @@ public class ProductService {
         }
         try {
          productRepository.deleteById(id);
+         productRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Referential integrity failure");
         }

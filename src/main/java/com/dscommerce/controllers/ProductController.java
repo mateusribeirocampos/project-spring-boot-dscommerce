@@ -29,7 +29,7 @@ public class ProductController {
     public ResponseEntity<Page<ProductMinDTO>> findAll(
             @RequestParam(name = "name", defaultValue = "") String name,
             Pageable pageable) {
-        logger.info("GET /products?size=21&page=0&sort=name,desc&name=pc%20gamer - finding all products");
+        logger.info("GET /products?size=21&page=0&sort=name,desc&name= - finding all products");
         Page<ProductMinDTO> dto = productService.findAll(name, pageable);
         return ResponseEntity.ok(dto);
     }
