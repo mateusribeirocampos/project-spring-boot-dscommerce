@@ -117,6 +117,65 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.13</version>
+				<configuration>
+					<excludes>
+						<exclude>com/dscommerce/DscommerceApplication.class</exclude>
+						<exclude>com/dscommerce/config/**</exclude>
+						<exclude>com/dscommerce/entities/**</exclude>
+						<exclude>com/dscommerce/dto/**</exclude>
+						<exclude>com/dscommerce/controllers/exceptions/**</exclude>
+						<exclude>com/dscommerce/services/exceptions/**</exclude>
+						<exclude>com/dscommerce/services/validation/*Valid.class</exclude>
+						<exclude>com/dscommerce/projections/**</exclude>
+						<exclude>com/dscommerce/tests/**</exclude>
+						<exclude>com/dscommerce/repositories/**</exclude>
+						<exclude>com/dscommerce/DscommerceApplicationTests.class</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>jacoco.report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/jacoco-report</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>jacoco-check</id>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule>
+									<element>BUNDLE</element>
+									<limits>
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.40</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 

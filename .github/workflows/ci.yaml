@@ -23,5 +23,8 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Run test
-        run: mvn --no-transfer-progress test
+      - name: Build and test coverage
+        run: mvn --no-transfer-progress verify
+
+      - name: Build docker image
+        run: docker build -t dscommerce .
