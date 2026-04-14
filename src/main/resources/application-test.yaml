@@ -35,6 +35,10 @@ spring:
         format_sql: true
         generate_statistics: false
 
+    # flyway
+  flyway:
+    enabled: false
+
   # Test data initialization (uncomment if needed)
   # sql:
   #   init:
