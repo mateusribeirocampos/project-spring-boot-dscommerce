@@ -14,6 +14,9 @@
 ![Render](https://img.shields.io/badge/Render-Deploy-000000?logo=render&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI/CD-2088FF?logo=githubactions&logoColor=white)
 ![Resend](https://img.shields.io/badge/Resend-Email_API-black?logo=resend&logoColor=white)
+![Flyway](https://img.shields.io/badge/Flyway-Migrations-CC0000?logo=flyway&logoColor=white)
+![JaCoCo](https://img.shields.io/badge/JaCoCo-Coverage-brightgreen?logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Container-2496ED?logo=docker&logoColor=white)
 
 A backend-focused e-commerce API built with Spring Boot, designed to showcase secure authentication and authorization, role-based access control, layered architecture, JPA entity relationships, validation, exception handling, automated tests, and production-oriented deployment.
 
@@ -52,6 +55,8 @@ The project emphasizes:
 - Validation and consistent error handling
 - H2 profile for local/test execution
 - PostgreSQL in production
+- Flyway-managed versioned database migrations
+- Code coverage enforcement with JaCoCo (minimum 40% line coverage gate)
 - Deployed API running on Render
 - Separate frontend client consuming the backend API
 
@@ -71,6 +76,9 @@ The project emphasizes:
 - Maven
 - Supabase (production database)
 - Render.com (cloud hosting)
+- Flyway (database migrations)
+- JaCoCo (code coverage)
+- Docker (containerization for Render deployment)
 
 ---
 
@@ -244,8 +252,19 @@ Main testing tools used in the project include:
 - Mockito
 - Spring Boot Test
 - MockMvc
+- Spring Security Test
+- JaCoCo — code coverage reports generated on every build, with a minimum 40% line coverage gate enforced via `mvn verify`
 
 The test suite is continuously being refined to improve consistency and maintainability in the current Java 21 environment.
+
+### Running with Docker
+
+A `Dockerfile` is included and used for deployment on Render. It can also be used to run the application locally in a container:
+
+```bash
+docker build -t dscommerce .
+docker run -e SPRING_PROFILES_ACTIVE=test -p 8080:8080 dscommerce
+```
 
 ---
 
