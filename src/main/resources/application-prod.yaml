@@ -76,3 +76,7 @@ cors:
 email:
   from-address: ${EMAIL_FROM_ADDRESS:onboarding@resend.dev}
   from-name: ${FROM_NAME:dscommerce}
+
+app:
+  email:
+    resetPasswordUri: "${RESET_PASSWORD_URI:https://dscommerce-frontend.vercel.app/reset-password?token=}"

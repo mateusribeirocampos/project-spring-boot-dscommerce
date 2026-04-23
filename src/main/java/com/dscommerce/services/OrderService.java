@@ -1,6 +1,5 @@
 package com.dscommerce.services;
 
-import com.dscommerce.dto.EmailDTO;
 import com.dscommerce.dto.OrderDTO;
 import com.dscommerce.dto.OrderItemDTO;
 import com.dscommerce.entities.*;
@@ -8,13 +7,14 @@ import com.dscommerce.entities.enums.OrderStatus;
 import com.dscommerce.repositories.OrderItemRepository;
 import com.dscommerce.repositories.OrderRepository;
 import com.dscommerce.repositories.ProductRepository;
+import com.dscommerce.services.email.EmailFactory;
+import com.dscommerce.services.email.EmailService;
 import com.dscommerce.services.exceptions.DatabaseException;
 import com.dscommerce.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -46,11 +46,8 @@ public class OrderService {
     @Autowired
     private EmailService emailService;
 
-    @Value("${email.from-address}")
-    private String fromAddress;
-
-    @Value("${email.from-name}")
-    private String fromName;
+    @Autowired
+    private EmailFactory emailFactory;
 
     @Transactional(readOnly = true)
     public List<OrderDTO> findAll() {
@@ -90,56 +87,8 @@ public class OrderService {
         orderRepository.save(order);
         orderItemRepository.saveAll(order.getItems());
 
-        emailService.plainTextEmail(buildOrderConfirmationEmail(user, order));
+        emailService.plainTextEmail(emailFactory.buildOrderConfirmationEmail(user, order));
         return new OrderDTO(order);
-    }
-
-    private EmailDTO buildOrderConfirmationEmail(User user, Order order) {
-
-        double total = order.getItems().stream()
-                .mapToDouble(item -> item.getPrice() * item.getQuantity()).sum();
-
-        StringBuilder rows = new StringBuilder();
-        for (OrderItem item : order.getItems()) {
-            double subtotal = item.getPrice() * item.getQuantity();
-            rows.append(String.format(
-                    "<tr><td>%s</td><td>%d</td><td>$ %.2f</td><td>$ %.2f</td></tr>",
-                    item.getProduct().getName(),
-                    item.getQuantity(),
-                    item.getPrice(),
-                    subtotal
-            ));
-        }
-
-        String subject = "Order confirmed #" + order.getId();
-        String body = String.format("""                                                                                                                                    
-      <h2>Order Confirmation #%d</h2>
-      <p>Hello, <strong>%s</strong>!</p>
-      <p>Received on: <strong>%s</strong></p>
-      <p>Status: <strong>%s</strong></p>
-  
-        <table border="1" cellpadding="8" cellspacing="0">
-        <thead>
-          <tr>
-            <th>Product</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>%s</tbody>
-      </table>
-  
-      <p><strong>Total: $ %.2f</strong></p>
-      <p>Thank you for your purchase!</p>
-      """, order.getId(), user.getName(), order.getMoment(), order.getStatus(), rows, total);
-
-        return new EmailDTO(
-                fromAddress,
-                fromName,
-                user.getEmail(),
-                user.getEmail(),
-                subject,
-                body,
-                "text/html"
-        );
     }
 
     @Transactional

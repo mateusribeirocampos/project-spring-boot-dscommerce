@@ -1,4 +1,4 @@
-package com.dscommerce.services;
+package com.dscommerce.services.email;
 
 import com.dscommerce.dto.EmailDTO;
 

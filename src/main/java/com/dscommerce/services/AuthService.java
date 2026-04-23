@@ -1,9 +1,11 @@
 package com.dscommerce.services;
 
+import com.dscommerce.dto.ForgotPasswordDTO;
 import com.dscommerce.entities.User;
 import com.dscommerce.services.exceptions.ForbiddenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {

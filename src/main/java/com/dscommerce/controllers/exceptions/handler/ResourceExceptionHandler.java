@@ -4,6 +4,7 @@ import com.dscommerce.controllers.exceptions.StandardError;
 import com.dscommerce.dto.exceptions.ValidationError;
 import com.dscommerce.services.exceptions.DatabaseException;
 import com.dscommerce.services.exceptions.ForbiddenException;
+import com.dscommerce.services.exceptions.InvalidTokenException;
 import com.dscommerce.services.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -79,5 +80,21 @@ public class ResourceExceptionHandler {
                 e.getMessage(),
                 request.getRequestURI());
         return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<StandardError> invalidToken(
+            InvalidTokenException e,
+            HttpServletRequest request) {
+        String error = "Invalid data";
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        StandardError validationError = new StandardError(
+                Instant.now(),
+                status.value(),
+                error,
+                e.getMessage(),
+                request.getRequestURI());
+
+        return ResponseEntity.status(status).body(validationError);
     }
 }

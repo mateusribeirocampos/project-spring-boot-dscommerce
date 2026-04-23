@@ -1,7 +1,6 @@
-package com.dscommerce.services;
+package com.dscommerce.services.email;
 
 import com.dscommerce.dto.EmailDTO;
-import com.dscommerce.services.exceptions.EmailException;
 import com.resend.Resend;
 import com.resend.core.exception.ResendException;
 import com.resend.services.emails.model.CreateEmailOptions;

@@ -1,7 +1,7 @@
 package com.dscommerce.config;
 
-import com.dscommerce.services.EmailService;
-import com.dscommerce.services.ResendEmailService;
+import com.dscommerce.services.email.EmailService;
+import com.dscommerce.services.email.ResendEmailService;
 import com.resend.Resend;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
