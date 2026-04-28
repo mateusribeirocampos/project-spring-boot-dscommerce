@@ -225,3 +225,6 @@ CONFIG-REFERENCE.md
 src/main/resources/application-dev.yaml
 .mcp.json
 .claude
+.agents/
+skills-lock.json
+.codex

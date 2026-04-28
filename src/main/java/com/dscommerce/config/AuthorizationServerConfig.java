@@ -93,7 +93,7 @@ public class AuthorizationServerConfig {
 	}
 
 	@Bean
-	public OAuth2AuthorizationConsentService oAuth2AuthorizationConsentService() {
+	public OAuth2AuthorizationConsentService oauth2AuthorizationConsentService() {
 		return new InMemoryOAuth2AuthorizationConsentService();
 	}
 
@@ -106,12 +106,16 @@ public class AuthorizationServerConfig {
 			.clientSecret(passwordEncoder.encode(clientSecret))
 			.scope("read")
 			.scope("write")
+			// Custom "password" grant — NOT the deprecated OAuth2 Resource Owner Password Credentials (RFC 6749 §4.3).
+			// Purpose-built grant for this SPA login flow, implemented in CustomPasswordAuthenticationProvider.
 			.authorizationGrantType(new AuthorizationGrantType("password"))
 			.tokenSettings(tokenSettings())
 			.clientSettings(clientSettings())
 			.build();
 		// @formatter:on
 
+		// Portfolio: single static client loaded from env vars — InMemoryRegisteredClientRepository is sufficient.
+		// Production with multiple clients or dynamic registration: use JdbcRegisteredClientRepository.
 		return new InMemoryRegisteredClientRepository(registeredClient);
 	}
 
@@ -172,6 +176,9 @@ public class AuthorizationServerConfig {
 		return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
 	}
 
+	// RSA key pair generated on startup — all issued tokens are invalidated on restart.
+	// Acceptable for portfolio (single instance). Production: load from KeyStore or secrets manager
+	// so all instances share the same signing key.
 	private static RSAKey generateRsa() {
 		KeyPair keyPair = generateRsaKey();
 		RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();

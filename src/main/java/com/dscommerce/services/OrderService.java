@@ -93,7 +93,7 @@ public class OrderService {
 
     @Transactional
     public OrderDTO update(Long id, OrderDTO dto) {
-        logger.info("Updating a order {} by id: {}", dto.getClient(), id);
+        logger.info("Updating order {} by id: {}", dto.getClient(), id);
         try {
             Order order = orderRepository.getReferenceById(id);
             User user = userService.authenticated();
