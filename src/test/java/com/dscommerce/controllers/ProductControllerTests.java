@@ -66,7 +66,7 @@ public class ProductControllerTests {
 
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").exists())
-                .andExpect(jsonPath("$.totalElements").value(1))
+                .andExpect(jsonPath("$.page.totalElements").value(1))
                 .andExpect(jsonPath("$.content[0].id").value(exitingId))
                 .andExpect(jsonPath("$.content[0].name").value("PC Gamer WW"));
     }
