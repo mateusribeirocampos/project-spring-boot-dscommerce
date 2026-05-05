@@ -216,6 +216,7 @@ secrets/
 HELP.md
 create-schema.sql
 CONFIG-REFERENCE.md
+SKILL.md
 
 # Permitir source em target (Spring Boot padrão)
 !**/src/main/**/target/
@@ -226,5 +227,7 @@ src/main/resources/application-dev.yaml
 .mcp.json
 .claude
 .agents/
+.crush/
 skills-lock.json
 .codex
+CLAUDE.md

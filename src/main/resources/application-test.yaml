@@ -75,3 +75,7 @@ email:
 app:
   email:
     resetPasswordUri: "http://localhost:3000/reset-password?token="
+
+mock:
+  client-email: ${MOCK_CLIENT_EMAIL:maria@gmail.com}
+  client-password: ${MOCK_CLIENT_PASSWORD:123456}

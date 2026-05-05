@@ -1,6 +1,7 @@
 package com.dscommerce.dto;
 
 import com.dscommerce.entities.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -10,8 +11,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+
 public class UserDTO {
 
+    @Schema(accessMode = READ_ONLY)
     private Long id;
 
     @Size(min = 3, max = 80, message = "Character number must be between 3 and 80")
@@ -24,6 +28,7 @@ public class UserDTO {
     private String phone;
     private LocalDate birthDate;
 
+    @Schema(accessMode = READ_ONLY)
     private List<String> roles = new ArrayList<>();
 
     public UserDTO(){}

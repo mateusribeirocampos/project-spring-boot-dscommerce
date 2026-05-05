@@ -52,3 +52,7 @@ server:
     include-binding-errors: always
     include-stacktrace: on_param
     include-exception: false
+
+mock:
+  client-email: ${MOCK_CLIENT_EMAIL:maria@gmail.com}
+  client-password: ${MOCK_CLIENT_PASSWORD:123456}

@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
@@ -106,6 +107,12 @@ public class AuthorizationServerConfig {
 			.clientSecret(passwordEncoder.encode(clientSecret))
 			.scope("read")
 			.scope("write")
+			// CLIENT_SECRET_BASIC: default OAuth2 client auth — sends credentials as HTTP Basic Auth header.
+			// Required for Postman, curl, and any client that uses Authorization: Basic base64(clientId:secret).
+			.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+			// CLIENT_SECRET_POST: allows client_id + client_secret as form params (needed for Swagger UI).
+			// Default CLIENT_SECRET_BASIC requires HTTP Basic Auth header — Swagger Execute button doesn't support it.
+			.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
 			// Custom "password" grant — NOT the deprecated OAuth2 Resource Owner Password Credentials (RFC 6749 §4.3).
 			// Purpose-built grant for this SPA login flow, implemented in CustomPasswordAuthenticationProvider.
 			.authorizationGrantType(new AuthorizationGrantType("password"))

@@ -1,8 +1,14 @@
 package com.dscommerce.controllers;
 
+import com.dscommerce.controllers.exceptions.StandardError;
 import com.dscommerce.dto.ProductDTO;
 import com.dscommerce.dto.ProductMinDTO;
 import com.dscommerce.services.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +24,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/products")
+@Tag(name = "Product", description = "Controller for product")
 public class ProductController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
@@ -25,7 +32,13 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping
+    @GetMapping(produces = "application/json")
+    @Operation(summary = "Find all products", description = "Controller for visualize all the products",
+    responses = {
+            @ApiResponse(description = "OK", responseCode = "200"),
+            @ApiResponse(description = "Bad Request", responseCode = "400",
+                    content = @Content(schema = @Schema(implementation = StandardError.class)))
+    })
     public ResponseEntity<Page<ProductMinDTO>> findAll(
             @RequestParam(name = "name", defaultValue = "") String name,
             Pageable pageable) {
@@ -34,7 +47,13 @@ public class ProductController {
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{id}", produces = "application/json")
+    @Operation(summary = "Find product by id", description = "Controller to find product by id",
+            responses = {
+                    @ApiResponse(description = "OK", responseCode = "200"),
+                    @ApiResponse(description = "Bad Request", responseCode = "400",
+                            content = @Content(schema = @Schema(implementation = StandardError.class)))
+            })
     public ResponseEntity<ProductDTO> findById(@PathVariable Long id) {
         logger.info("GET /products/{} - finding one product by id ", id);
         ProductDTO dto = productService.findById(id);
@@ -42,7 +61,17 @@ public class ProductController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping
+    @PostMapping(produces = "application/json", consumes = "application/json")
+    @Operation(summary = "Insert product", description = "Controller to insert product",
+            responses = {
+                    @ApiResponse(description = "Created", responseCode = "201"),
+                    @ApiResponse(description = "Bad Request", responseCode = "400",
+                            content = @Content(schema = @Schema(implementation = StandardError.class))),
+                    @ApiResponse(description = "Forbidden", responseCode = "403",
+                            content = @Content(schema = @Schema(implementation = StandardError.class))),
+                    @ApiResponse(description = "Unprocessable Entity", responseCode = "422",
+                            content = @Content(schema = @Schema(implementation = StandardError.class)))
+            })
     public ResponseEntity<ProductDTO> insert(@Valid @RequestBody ProductDTO dto) {
         logger.info("POST /products - creating a product {}", dto.getName());
         dto = productService.insert(dto);
@@ -55,7 +84,17 @@ public class ProductController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
+    @Operation(summary = "Update product by id", description = "Controller to update product by id",
+            responses = {
+                    @ApiResponse(description = "OK", responseCode = "200"),
+                    @ApiResponse(description = "Bad Request", responseCode = "400",
+                            content = @Content(schema = @Schema(implementation = StandardError.class))),
+                    @ApiResponse(description = "Forbidden", responseCode = "403",
+                            content = @Content(schema = @Schema(implementation = StandardError.class))),
+                    @ApiResponse(description = "Unprocessable Entity", responseCode = "422",
+                            content = @Content(schema = @Schema(implementation = StandardError.class)))
+            })
     public ResponseEntity<ProductDTO> update(@PathVariable Long id,
                                              @Valid @RequestBody ProductDTO dto) {
         logger.info("PUT /products/{} - updating product {} by id", id, dto.getName());
@@ -65,6 +104,18 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/{id}")
+    @Operation(summary = "Delete product by id", description = "Controller to delete product by id",
+            responses = {
+                    @ApiResponse(description = "Created", responseCode = "201"),
+                    @ApiResponse(description = "Bad Request", responseCode = "400",
+                            content = @Content(schema = @Schema(implementation = StandardError.class))),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401",
+                            content = @Content(schema = @Schema(implementation = StandardError.class))),
+                    @ApiResponse(description = "Forbidden", responseCode = "403",
+                            content = @Content(schema = @Schema(implementation = StandardError.class))),
+                    @ApiResponse(description = "Unprocessable Entity", responseCode = "422",
+                            content = @Content(schema = @Schema(implementation = StandardError.class)))
+            })
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         logger.info("DELETE /products/{} - deleting product by id", id);
         productService.delete(id);
