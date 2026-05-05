@@ -1,9 +1,15 @@
 package com.dscommerce.controllers;
 
+import com.dscommerce.controllers.exceptions.StandardError;
 import com.dscommerce.dto.UserDTO;
 import com.dscommerce.dto.UserInsertDTO;
 import com.dscommerce.dto.UserUpdateDTO;
 import com.dscommerce.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,19 +21,34 @@ import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/users")
+@Tag(name = "Users", description = "Controller for users")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
-    @GetMapping(value = "/me")
+    @GetMapping(value = "/me", produces = "application/json")
+    @Operation(summary ="Profile", description = "Controller for visualize user profile",
+    responses = {
+            @ApiResponse(description = "OK", responseCode = "200"),
+            @ApiResponse(description = "Unauthorized", responseCode = "401",
+                    content = @Content(schema = @Schema(implementation = StandardError.class))),
+            @ApiResponse(description = "Forbidden", responseCode = "403",
+                    content = @Content(schema = @Schema(implementation = StandardError.class)))
+    })
     public ResponseEntity<UserDTO> getMe() {
         UserDTO dto = userService.getMe();
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping(value = "/register")
+    @PostMapping(value = "/register", produces = "application/json", consumes = "application/json")
+    @Operation(summary = "Register", description = "Controller for register users",
+    responses = {
+            @ApiResponse(description = "Created", responseCode = "201"),
+            @ApiResponse(description = "Unprocessable Entity", responseCode = "422",
+                    content = @Content(schema = @Schema(implementation = StandardError.class)))
+    })
     public ResponseEntity<UserDTO> register(@Valid @RequestBody UserInsertDTO dto) {
         UserDTO newDto = userService.register(dto);
         URI uri = ServletUriComponentsBuilder
@@ -39,7 +60,19 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
-    @PutMapping(value = "/me")
+    @PutMapping(value = "/me", produces = "application/json", consumes = "application/json")
+    @Operation(summary = "Update profile", description = "Controller for update user profile",
+    responses = {
+            @ApiResponse(description = "OK", responseCode = "200"),
+            @ApiResponse(description = "Unauthorized", responseCode = "401",
+                    content = @Content(schema = @Schema(implementation = StandardError.class))),
+            @ApiResponse(description = "Forbidden", responseCode = "403",
+                    content = @Content(schema = @Schema(implementation = StandardError.class))),
+            @ApiResponse(description = "Not Found", responseCode = "404",
+                    content = @Content(schema = @Schema(implementation = StandardError.class))),
+            @ApiResponse(description = "Unprocessable Entity", responseCode = "422",
+                    content = @Content(schema = @Schema(implementation = StandardError.class)))
+    })
     public ResponseEntity<UserDTO> updateMe(@Valid @RequestBody UserUpdateDTO dto) {
         UserDTO userUpdateDTO = userService.updateMe(dto);
         return ResponseEntity.ok(userUpdateDTO);
