@@ -17,6 +17,7 @@
 ![Flyway](https://img.shields.io/badge/Flyway-Migrations-CC0000?logo=flyway&logoColor=white)
 ![JaCoCo](https://img.shields.io/badge/JaCoCo-Coverage-brightgreen?logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Container-2496ED?logo=docker&logoColor=white)
+![Swagger](https://img.shields.io/badge/Swagger-OpenAPI_3-85EA2D?logo=swagger&logoColor=black)
 
 A backend-focused e-commerce API built with Spring Boot, designed to showcase secure authentication and authorization, role-based access control, layered architecture, JPA entity relationships, validation, exception handling, automated tests, and production-oriented deployment.
 
@@ -59,6 +60,7 @@ The project emphasizes:
 - Code coverage enforcement with JaCoCo (minimum 40% line coverage gate)
 - Deployed API running on Render
 - Separate frontend client consuming the backend API
+- Interactive API documentation with Swagger UI (springdoc-openapi 2.7.0), including OAuth2 token generation directly from the browser
 
 ---
 
@@ -79,6 +81,7 @@ The project emphasizes:
 - Flyway (database migrations)
 - JaCoCo (code coverage)
 - Docker (containerization for Render deployment)
+- springdoc-openapi 2.7.0 (OpenAPI 3 / Swagger UI)
 
 ---
 
@@ -170,6 +173,27 @@ erDiagram
 - `PUT /categories/{id}`
 - `DELETE /categories/{id}`
 - `GET /orders`
+
+---
+
+## API Documentation
+
+Interactive API documentation is available via Swagger UI at:
+
+```
+http://localhost:8080/swagger-ui/index.html
+```
+
+All endpoints are documented with request/response schemas, validation rules, and error responses.
+
+### Authentication in Swagger UI
+
+1. Open the **Authentication** section and execute `POST /oauth2/token` — credentials are pre-filled from application properties
+2. Copy the `access_token` value from the response
+3. Click **Authorize** (top right) and paste the token
+4. All subsequent requests will include the `Authorization: Bearer <token>` header automatically
+
+> **Note:** Swagger UI is disabled in the production profile (`springdoc.swagger-ui.enabled=false`).
 
 ---
 
@@ -285,6 +309,7 @@ The backend remains the main focus of this portfolio project.
 - The custom password grant flow was kept for learning and portfolio purposes
 - Some authentication and token-related decisions were simplified compared to a full enterprise IAM solution
 - The frontend is complementary and serves as a client for API interaction
+- Swagger UI is enabled only in local/dev profiles; it is disabled in production to avoid exposing internal API structure
 
 ---
 
