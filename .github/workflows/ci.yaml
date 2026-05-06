@@ -24,6 +24,8 @@ jobs:
           cache: maven
 
       - name: Build and test coverage
+        env:
+          JWT_KEYSTORE_PASSWORD: ${{ secrets.JWT_KEYSTORE_PASSWORD }}
         run: mvn --no-transfer-progress verify
 
       - name: Build docker image
