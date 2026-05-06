@@ -202,6 +202,7 @@ README.html
 .env.*.local
 dscommerce/.env
 .idea
+src/main/resources/certs/*.p12
 
 # Dados sensíveis
 db.properties

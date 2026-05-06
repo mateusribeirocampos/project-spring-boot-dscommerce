@@ -76,6 +76,12 @@ app:
   email:
     resetPasswordUri: "http://localhost:3000/reset-password?token="
 
+  security:
+    jwt:
+      keystore-location: classpath:certs/dscommerce-jwt.p12
+      keystore-password: ${JWT_KEYSTORE_PASSWORD:b8ZYDPrvMapad5YmSAp7/oP7eRLGersv}
+      key-alias: ${JWT_KEY_ALIAS:dscommerce-jwt}
+
 mock:
   client-email: ${MOCK_CLIENT_EMAIL:maria@gmail.com}
   client-password: ${MOCK_CLIENT_PASSWORD:123456}

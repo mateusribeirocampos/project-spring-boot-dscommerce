@@ -1,9 +1,5 @@
 package com.dscommerce.config;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
@@ -47,8 +43,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import com.dscommerce.config.customgrant.CustomPasswordAuthenticationConverter;
 import com.dscommerce.config.customgrant.CustomPasswordAuthenticationProvider;
 import com.dscommerce.config.customgrant.CustomUserAuthorities;
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
@@ -72,7 +66,7 @@ public class AuthorizationServerConfig {
 
 	@Bean
 	@Order(2)
-	public SecurityFilterChain asSecurityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain asSecurityFilterChain(HttpSecurity http, JWKSource<SecurityContext> jwkSource) throws Exception {
 
 		http.securityMatcher("/oauth2/**", "/.well-known/**").with(OAuth2AuthorizationServerConfigurer.authorizationServer(), Customizer.withDefaults());
 
@@ -80,7 +74,7 @@ public class AuthorizationServerConfig {
 		http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
 			.tokenEndpoint(tokenEndpoint -> tokenEndpoint
 				.accessTokenRequestConverter(new CustomPasswordAuthenticationConverter())
-				.authenticationProvider(new CustomPasswordAuthenticationProvider(authorizationService(), tokenGenerator(), userDetailsService, passwordEncoder)));
+				.authenticationProvider(new CustomPasswordAuthenticationProvider(authorizationService(), tokenGenerator(jwkSource), userDetailsService, passwordEncoder)));
 
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		// @formatter:on
@@ -147,8 +141,8 @@ public class AuthorizationServerConfig {
 	}
 
 	@Bean
-	public OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator() {
-		NimbusJwtEncoder jwtEncoder = new NimbusJwtEncoder(jwkSource());
+	public OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator(JWKSource<SecurityContext> jwkSource) {
+		NimbusJwtEncoder jwtEncoder = new NimbusJwtEncoder(jwkSource);
 		JwtGenerator jwtGenerator = new JwtGenerator(jwtEncoder);
 		jwtGenerator.setJwtCustomizer(tokenCustomizer());
 		OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
@@ -176,32 +170,38 @@ public class AuthorizationServerConfig {
 		return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
 	}
 
-	@Bean
-	public JWKSource<SecurityContext> jwkSource() {
-		RSAKey rsaKey = generateRsa();
-		JWKSet jwkSet = new JWKSet(rsaKey);
-		return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
-	}
+	// LEGACY: RSA generated in memory on startup.
+	// Kept for reference — replaced by JwtKeyConfig + KeyStore (dscommerce-jwt.p12).
+	// Tokens were invalidated on restart; multi-instance deployments broke (different keys per JVM).
+	//
+	// private static RSAKey generateRsa() { ... }
+	// private static KeyPair generateRsaKey() { ... }
+//	@Bean
+//	public JWKSource<SecurityContext> jwkSource() {
+//		RSAKey rsaKey = generateRsa();
+//		JWKSet jwkSet = new JWKSet(rsaKey);
+//		return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
+//	}
 
 	// RSA key pair generated on startup — all issued tokens are invalidated on restart.
 	// Acceptable for portfolio (single instance). Production: load from KeyStore or secrets manager
 	// so all instances share the same signing key.
-	private static RSAKey generateRsa() {
-		KeyPair keyPair = generateRsaKey();
-		RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-		RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-		return new RSAKey.Builder(publicKey).privateKey(privateKey).keyID(UUID.randomUUID().toString()).build();
-	}
+//	private static RSAKey generateRsa() {
+//		KeyPair keyPair = generateRsaKey();
+//		RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+//		RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+//		return new RSAKey.Builder(publicKey).privateKey(privateKey).keyID(UUID.randomUUID().toString()).build();
+//	}
 
-	private static KeyPair generateRsaKey() {
-		KeyPair keyPair;
-		try {
-			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-			keyPairGenerator.initialize(2048);
-			keyPair = keyPairGenerator.generateKeyPair();
-		} catch (Exception ex) {
-			throw new IllegalStateException(ex);
-		}
-		return keyPair;
-	}
+//	private static KeyPair generateRsaKey() {
+//		KeyPair keyPair;
+//		try {
+//			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+//			keyPairGenerator.initialize(2048);
+//			keyPair = keyPairGenerator.generateKeyPair();
+//		} catch (Exception ex) {
+//			throw new IllegalStateException(ex);
+//		}
+//		return keyPair;
+//	}
 }

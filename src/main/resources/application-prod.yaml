@@ -79,3 +79,9 @@ email:
 app:
   email:
     resetPasswordUri: "${RESET_PASSWORD_URI:https://dscommerce-frontend.vercel.app/reset-password?token=}"
+
+  security:
+    jwt:
+      keystore-base64: ${JWT_KEYSTORE_BASE64}
+      keystore-password: ${JWT_KEYSTORE_PASSWORD}
+      key-alias: ${JWT_KEY_ALIAS:dscommerce-jwt}
