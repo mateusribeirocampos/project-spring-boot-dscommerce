@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,6 +26,7 @@ jobs:
       - name: Build and test coverage
         env:
           JWT_KEYSTORE_PASSWORD: ${{ secrets.JWT_KEYSTORE_PASSWORD }}
+          JWT_KEYSTORE_BASE64: ${{ secrets.JWT_KEYSTORE_BASE64 }}
         run: mvn --no-transfer-progress verify
 
       - name: Build docker image
