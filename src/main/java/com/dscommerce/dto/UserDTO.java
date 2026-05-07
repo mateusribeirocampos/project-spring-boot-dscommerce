@@ -15,17 +15,23 @@ import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 
 public class UserDTO {
 
-    @Schema(accessMode = READ_ONLY)
+    @Schema(accessMode = READ_ONLY, description = "Database generated User ID")
     private Long id;
 
+    @Schema(description = "User name")
     @Size(min = 3, max = 80, message = "Character number must be between 3 and 80")
     @NotBlank(message = "Name cannot be empty")
     private String name;
 
+    @Schema(description = "User email")
     @NotBlank(message = "Email cannot be empty")
     @Email(message = "Invalid email format")
     private String email;
+
+    @Schema(description = "User phone")
     private String phone;
+
+    @Schema(description = "User birth date")
     private LocalDate birthDate;
 
     @Schema(accessMode = READ_ONLY)

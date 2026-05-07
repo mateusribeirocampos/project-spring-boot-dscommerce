@@ -60,6 +60,12 @@ server:
     include-stacktrace: never
     include-exception: false
 
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false
+
 # Security - OAuth2/JWT Configuration
 security:
   client-id: ${CLIENT_ID}
