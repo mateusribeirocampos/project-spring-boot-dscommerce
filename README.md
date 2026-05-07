@@ -24,6 +24,7 @@ A backend-focused e-commerce API built with Spring Boot, designed to showcase se
 This is the main backend project in my portfolio and reflects my focus on building secure, maintainable RESTful APIs with Java and Spring Boot.
 
 **Live API:** https://project-spring-boot-dscommerce.onrender.com/
+
 **Frontend demo:** [dscommerce-frontend.vercel.app](https://dscommerce-frontend.vercel.app/) — ([GitHub repo](https://github.com/mateusribeirocampos/dscommerce-frontend))
 
 ![DSCommerce](https://img.shields.io/badge/DSCommerce-FF5500?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8Y2lyY2xlIGN4PSIzNSIgY3k9Ijc1IiByPSI4IiBmaWxsPSJ3aGl0ZSIvPgogIDxjaXJjbGUgY3g9IjcwIiBjeT0iNzUiIHI9IjgiIGZpbGw9IndoaXRlIi8+CiAgPHBhdGggZD0iTTIwIDI1aDEwbDggMzVoMzJsMTAtMjVINDIiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPg==&logoColor=white)
@@ -36,27 +37,30 @@ DSCommerce is a RESTful backend for an e-commerce domain, covering core business
 
 The project emphasizes:
 
-- secure API access with JWT-based authentication
-- role-based authorization for protected resources
-- layered backend architecture
+- Secure API access with JWT-based authentication
+- Role-based authorization for protected resources
+- Layered backend architecture
 - JPA domain modeling and entity relationships
-- validation and centralized exception handling
-- environment-based configuration for local and production usage
-- deployment to a cloud environment with PostgreSQL
+- Validation and centralized exception handling
+- Environment-based configuration for local and production usage
+- Deployment to a cloud environment with PostgreSQL
 
 ---
 
 ## Key Features
 
-- JWT-based authentication and authorization
+- JWT-based authentication and authorization via custom OAuth2 password grant
+- JWT RSA key loaded from PKCS12 KeyStore — stable `kid`, tokens survive application restart
 - Role-based access control (public, authenticated, and admin routes)
-- OAuth2 Authorization Server integration
+- OAuth2 Authorization Server integration with Spring Authorization Server
+- Password recovery via tokenized email (10-minute expiry, Resend API)
 - Layered architecture with Controllers, Services, and Repositories
 - JPA/Hibernate mapping for a relational e-commerce domain
-- Validation and consistent error handling
+- Bean Validation and centralized exception handling
 - H2 profile for local/test execution
 - PostgreSQL in production
 - Flyway-managed versioned database migrations
+- BCrypt password hashing (work factor 12)
 - Code coverage enforcement with JaCoCo (minimum 40% line coverage gate)
 - Deployed API running on Render
 - Separate frontend client consuming the backend API
@@ -67,35 +71,28 @@ The project emphasizes:
 ## Tech Stack
 
 - Java 21
-- Spring Boot 3.4
+- Spring Boot 3.4.3
 - Spring Security
-- OAuth2 Authorization Server
-- JWT
-- Spring Data JPA
-- Hibernate
+- Spring Authorization Server (OAuth2 + custom password grant)
+- JWT — RSA 2048 via PKCS12 KeyStore
+- Spring Data JPA / Hibernate
 - PostgreSQL
-- H2
+- H2 (test/dev)
+- Flyway (database migrations)
+- BCrypt (work factor 12)
 - Maven
+- Resend (transactional email API)
 - Supabase (production database)
 - Render.com (cloud hosting)
-- Flyway (database migrations)
-- JaCoCo (code coverage)
 - Docker (containerization for Render deployment)
+- JaCoCo (code coverage)
 - springdoc-openapi 2.7.0 (OpenAPI 3 / Swagger UI)
 
 ---
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    FE[Frontend / API Client] --> SEC[Spring Security]
-    SEC --> CTRL[Controllers]
-    CTRL --> SVC[Services]
-    SVC --> REPO[Repositories]
-    REPO --> H2[(H2 - local/test)]
-    REPO --> DB[(Supabase PostgreSQL - production)]
-```
+![Architecture](images/architecture.png)
 
 The project follows a layered backend architecture with clear separation of concerns:
 
@@ -104,46 +101,27 @@ The project follows a layered backend architecture with clear separation of conc
 - **Repositories** manage persistence with Spring Data JPA
 - **Security** is implemented with Spring Security, OAuth2, and JWT
 
-In production, the API is deployed on Render and connected to a Supabase PostgreSQL database. Locally, the `test` profile uses an H2 in-memory database for simplified execution and testing.
+In production, the API is deployed on Render and connected to a Supabase PostgreSQL database.
+The frontend is deployed on Vercel and connected to Render.
+Locally, the `test` profile uses an H2 in-memory database for simplified execution and testing.
 
 ---
 
 ## Security Flow
 
-```mermaid
-sequenceDiagram
-    participant C as Client
-    participant AS as Authorization Server
-    participant RS as Resource Server
+![Security Flow](images/security.png)
 
-    C->>AS: POST /oauth2/token
-    AS->>AS: Validate client credentials
-    AS->>AS: Validate user credentials
-    AS-->>C: Return JWT access token
-
-    C->>RS: Request with Bearer token
-    RS->>RS: Validate JWT
-    RS->>RS: Extract username and authorities
-    RS-->>C: Return protected resource
-```
-
-Authentication is based on JWT access tokens issued by the authorization server.
+Authentication is based on JWT access tokens issued by the authorization server using a custom password grant (not the deprecated ROPC flow).
 
 Authorization combines endpoint-level role checks with business rules such as owner-or-admin access.
+
+The RSA key pair is loaded from a PKCS12 KeyStore (`.p12`) at startup. This gives the JWT a stable `kid` (Key ID), so tokens remain valid across application restarts and multi-instance deployments — a prerequisite for implementing refresh tokens with persistent storage.
 
 ---
 
 ## Domain Model
 
-```mermaid
-erDiagram
-    USER ||--o{ ORDER : places
-    ORDER ||--o| PAYMENT : has
-    ORDER ||--o{ ORDER_ITEM : contains
-    PRODUCT ||--o{ ORDER_ITEM : appears_in
-    PRODUCT }o--o{ CATEGORY : belongs_to
-    USER }o--o{ ROLE : has
-```
+![Domain Model](images/UML-diagram.png)
 
 ---
 
@@ -151,18 +129,20 @@ erDiagram
 
 ### Public Endpoints
 
-- `POST /oauth2/token`
-- `GET /products`
-- `GET /products/{id}`
-- `GET /categories`
-- `POST /users/register`
+- `POST /oauth2/token` — get JWT access token (custom password grant)
+- `GET /products` — paginated product listing
+- `GET /products/{id}` — product detail
+- `GET /categories` — list all categories
+- `POST /users/register` — create account
+- `POST /users/forgot-password` — request password reset email
+- `PUT /users/reset-password` — reset password with recovery token
 
 ### Authenticated Endpoints
 
-- `GET /users/me`
-- `PUT /users/me`
-- `GET /orders/{id}`
-- `POST /orders`
+- `GET /users/me` — current user profile
+- `PUT /users/me` — update own profile
+- `GET /orders/{id}` — order detail (owner or admin)
+- `POST /orders` — place an order
 
 ### Admin Endpoints
 
@@ -227,6 +207,45 @@ grant_type=password
 - Java 21
 - Maven 3.8+
 - PostgreSQL, if you want to use the `dev` or `prod` profile
+
+### Environment Variables
+
+Create a `.env` file at the project root (not committed — see `.gitignore`):
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `JWT_KEYSTORE_PASSWORD` | Password used when generating the `.p12` | `changeit` |
+| `JWT_KEYSTORE_BASE64` | Base64-encoded `.p12` file (required in production) | `$(base64 -w 0 certs/...)` |
+| `JWT_KEY_ALIAS` | Alias used when generating the `.p12` | `dscommerce-jwt` |
+| `CLIENT_ID` | OAuth2 client identifier | `myclientid` |
+| `CLIENT_SECRET` | OAuth2 client secret | `myclientsecret` |
+| `CORS_ORIGINS` | Allowed CORS origins (comma-separated) | `http://localhost:3000` |
+| `EMAIL_FROM_ADDRESS` | Sender address for transactional emails | `onboarding@resend.dev` |
+
+The `test` profile uses hardcoded fallback values for all variables — running `mvn test` requires no `.env`.
+
+### JWT KeyStore Setup
+
+The `.p12` file is not committed to the repository. Generate it once before running locally:
+
+```bash
+keytool -genkeypair \
+  -alias dscommerce-jwt \
+  -keyalg RSA \
+  -keysize 2048 \
+  -storetype PKCS12 \
+  -keystore src/main/resources/certs/dscommerce-jwt.p12 \
+  -validity 3650 \
+  -storepass YOUR_PASSWORD
+```
+
+For production (PaaS env var), encode the file to base64:
+
+```bash
+base64 -w 0 src/main/resources/certs/dscommerce-jwt.p12
+```
+
+Set the output as `JWT_KEYSTORE_BASE64` in your deployment environment.
 
 ### Default Profile
 
