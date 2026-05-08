@@ -34,7 +34,7 @@ public class UserDTO {
     @Schema(description = "User birth date")
     private LocalDate birthDate;
 
-    @Schema(accessMode = READ_ONLY)
+    @Schema(accessMode = READ_ONLY, description = "User role")
     private List<String> roles = new ArrayList<>();
 
     public UserDTO(){}

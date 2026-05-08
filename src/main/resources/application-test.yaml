@@ -61,7 +61,8 @@ security:
   client-id: myclientid
   client-secret: myclientsecret
   jwt:
-    duration: 3600
+    duration-access: ${ACCESS_DURATION:900} # 15m
+    duration-refresh: ${REFRESH_DURATION:2592000} # 30d
 
 # CORS - Permissive for tests
 cors:

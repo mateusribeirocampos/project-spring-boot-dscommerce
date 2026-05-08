@@ -71,7 +71,8 @@ security:
   client-id: ${CLIENT_ID}
   client-secret: ${CLIENT_SECRET}
   jwt:
-    duration: ${JWT_DURATION:3600}
+    duration-access: ${ACCESS_DURATION:900} # 15m
+    duration-refresh: ${REFRESH_DURATION:2592000} # 30d
 
 # CORS - Production origins only
 cors:
