@@ -47,7 +47,8 @@ logging:
     org.springframework.security: WARN
     org.hibernate.SQL: WARN
     com.zaxxer.hikari: WARN
-    org.springframework.jdbc: WARN
+    org.springframework.jdbc: DEBUG
+    org.springframework.security.oauth2: DEBUG
 
 # Server
 server:
