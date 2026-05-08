@@ -87,7 +87,9 @@ public class AuthorizationServerConfig {
 			JdbcTemplate jdbcTemplate,
 			RegisteredClientRepository clientRepo
 	) {
-		return new JdbcOAuth2AuthorizationService(jdbcTemplate, clientRepo);
+		JdbcOAuth2AuthorizationService jdbc =
+				new JdbcOAuth2AuthorizationService(jdbcTemplate, clientRepo);
+		return new LoggingOAuth2AuthorizationServer(jdbc);
 	}
 
 	@Bean
