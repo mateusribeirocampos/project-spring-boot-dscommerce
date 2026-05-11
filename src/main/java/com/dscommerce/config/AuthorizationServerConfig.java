@@ -3,6 +3,7 @@ package com.dscommerce.config;
 import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,7 +184,7 @@ public class AuthorizationServerConfig {
 
 			if (details instanceof CustomUserAuthorities user) {
 				List<String> authorities = user.getAuthorities().stream()
-						.map(x -> x.getAuthority()).toList();
+						.map(x -> x.getAuthority()).collect(Collectors.toList());
 				context.getClaims()
 						.claim("authorities", authorities)
 						.claim("username", user.getUsername());
