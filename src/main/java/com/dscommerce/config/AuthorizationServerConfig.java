@@ -4,9 +4,9 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -16,6 +16,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.jackson2.SecurityJackson2Modules;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
@@ -29,6 +30,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
@@ -87,9 +89,21 @@ public class AuthorizationServerConfig {
 			JdbcTemplate jdbcTemplate,
 			RegisteredClientRepository clientRepo
 	) {
-		JdbcOAuth2AuthorizationService jdbc =
+		JdbcOAuth2AuthorizationService service =
 				new JdbcOAuth2AuthorizationService(jdbcTemplate, clientRepo);
-		return new LoggingOAuth2AuthorizationServer(jdbc);
+		JdbcOAuth2AuthorizationService.OAuth2AuthorizationRowMapper rowMapper =
+				new JdbcOAuth2AuthorizationService.OAuth2AuthorizationRowMapper(clientRepo);
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		ClassLoader classLoader = JdbcOAuth2AuthorizationService.class.getClassLoader();
+
+		objectMapper.registerModules(SecurityJackson2Modules.getModules(classLoader));
+		objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
+
+		rowMapper.setObjectMapper(objectMapper);
+		service.setAuthorizationRowMapper(rowMapper);
+
+		return new LoggingOAuth2AuthorizationService(service);
 	}
 
 	@Bean
