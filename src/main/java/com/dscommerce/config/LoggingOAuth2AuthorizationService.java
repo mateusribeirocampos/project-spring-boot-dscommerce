@@ -6,13 +6,13 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 
-public class LoggingOAuth2AuthorizationServer implements OAuth2AuthorizationService {
+public class LoggingOAuth2AuthorizationService implements OAuth2AuthorizationService {
 
-    private final Logger log = LoggerFactory.getLogger(LoggingOAuth2AuthorizationServer.class);
+    private final Logger log = LoggerFactory.getLogger(LoggingOAuth2AuthorizationService.class);
 
     private final OAuth2AuthorizationService delegate;
 
-    public LoggingOAuth2AuthorizationServer(OAuth2AuthorizationService delegate) {
+    public LoggingOAuth2AuthorizationService(OAuth2AuthorizationService delegate) {
         this.delegate = delegate;
     }
 

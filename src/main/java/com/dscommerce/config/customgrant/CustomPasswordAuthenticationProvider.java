@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -93,9 +94,10 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 				.authorizedScopes(authorizedScopes)
 				.authorizationGrantType(new AuthorizationGrantType("password"))
 				.authorizationGrant(customPasswordAuthenticationToken);
-		
-		OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient)
-				.attribute(Principal.class.getName(), clientPrincipal)
+
+        assert registeredClient != null;
+        OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient)
+				.attribute(Principal.class.getName(), new UsernamePasswordAuthenticationToken(username, null, user.getAuthorities()))
 				.principalName(clientPrincipal.getName())
 				.authorizationGrantType(new AuthorizationGrantType("password"))
 				.authorizedScopes(authorizedScopes);
