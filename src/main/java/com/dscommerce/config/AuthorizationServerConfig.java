@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -179,8 +180,9 @@ public class AuthorizationServerConfig {
 		return context -> {
 			if (!context.getTokenType().getValue().equals("access_token")) return;
 
-			OAuth2ClientAuthenticationToken principal = context.getPrincipal();
-			Object details = principal.getDetails();
+			Authentication principal = context.getPrincipal();
+			Object details = (principal instanceof OAuth2ClientAuthenticationToken clientAuth)
+					? clientAuth.getDetails() : null;
 
 			if (details instanceof CustomUserAuthorities user) {
 				List<String> authorities = user.getAuthorities().stream()
