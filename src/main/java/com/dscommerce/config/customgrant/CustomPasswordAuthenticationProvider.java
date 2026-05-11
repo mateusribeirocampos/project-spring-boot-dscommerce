@@ -2,6 +2,7 @@ package com.dscommerce.config.customgrant;
 
 import java.security.Principal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -95,9 +97,12 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 				.authorizationGrantType(new AuthorizationGrantType("password"))
 				.authorizationGrant(customPasswordAuthenticationToken);
 
-        assert registeredClient != null;
+		List<SimpleGrantedAuthority> simpleAuthorities = user.getAuthorities()
+				.stream().map(a -> new SimpleGrantedAuthority(a.getAuthority()))
+				.collect(Collectors.toList());
+
         OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient)
-				.attribute(Principal.class.getName(), new UsernamePasswordAuthenticationToken(username, null, user.getAuthorities()))
+				.attribute(Principal.class.getName(), new UsernamePasswordAuthenticationToken(username, null, simpleAuthorities))
 				.principalName(clientPrincipal.getName())
 				.authorizationGrantType(new AuthorizationGrantType("password"))
 				.authorizedScopes(authorizedScopes);
