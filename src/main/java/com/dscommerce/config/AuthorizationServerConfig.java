@@ -105,7 +105,7 @@ public class AuthorizationServerConfig {
 		rowMapper.setObjectMapper(objectMapper);
 		service.setAuthorizationRowMapper(rowMapper);
 
-		return new LoggingOAuth2AuthorizationService(service);
+		return service;
 	}
 
 	@Bean
