@@ -50,10 +50,12 @@ The project emphasizes:
 ## Key Features
 
 - JWT-based authentication and authorization via custom OAuth2 password grant
-- JWT RSA key loaded from PKCS12 KeyStore — stable `kid`, tokens survive application restart
+- Refresh token rotation — `JdbcOAuth2AuthorizationService` persists sessions in PostgreSQL; each use issues a new token and invalidates the previous one (RFC 6749 §6)
+- JWT RSA key loaded from PKCS12 KeyStore — stable `kid`, tokens survive application restart and multi-instance deployments
 - Role-based access control (public, authenticated, and admin routes)
 - OAuth2 Authorization Server integration with Spring Authorization Server
 - Password recovery via tokenized email (10-minute expiry, Resend API)
+- Scheduled cleanup of expired OAuth2 authorizations (daily at 03:00 UTC)
 - Layered architecture with Controllers, Services, and Repositories
 - JPA/Hibernate mapping for a relational e-commerce domain
 - Bean Validation and centralized exception handling
@@ -115,7 +117,9 @@ Authentication is based on JWT access tokens issued by the authorization server 
 
 Authorization combines endpoint-level role checks with business rules such as owner-or-admin access.
 
-The RSA key pair is loaded from a PKCS12 KeyStore (`.p12`) at startup. This gives the JWT a stable `kid` (Key ID), so tokens remain valid across application restarts and multi-instance deployments — a prerequisite for implementing refresh tokens with persistent storage.
+The RSA key pair is loaded from a PKCS12 KeyStore (`.p12`) at startup. This gives the JWT a stable `kid` (Key ID), so tokens remain valid across application restarts and multi-instance deployments — a prerequisite for refresh token persistence.
+
+Refresh tokens are stored in PostgreSQL via `JdbcOAuth2AuthorizationService`. Each use issues a new token and invalidates the previous one (rotation). Expired records are purged daily by a scheduled background job.
 
 ---
 
@@ -129,7 +133,7 @@ The RSA key pair is loaded from a PKCS12 KeyStore (`.p12`) at startup. This give
 
 ### Public Endpoints
 
-- `POST /oauth2/token` — get JWT access token (custom password grant)
+- `POST /oauth2/token` — get JWT access token (custom password grant) or exchange a refresh token for a new access token (`grant_type=refresh_token`)
 - `GET /products` — paginated product listing
 - `GET /products/{id}` — product detail
 - `GET /categories` — list all categories
@@ -179,6 +183,8 @@ All endpoints are documented with request/response schemas, validation rules, an
 
 ## Example Authentication Request
 
+### Login (password grant)
+
 ```http
 POST /oauth2/token
 Content-Type: application/x-www-form-urlencoded
@@ -189,6 +195,22 @@ grant_type=password
 &client_id=myclientid
 &client_secret=myclientsecret
 ```
+
+Response includes both `access_token` (15 min) and `refresh_token` (30 days).
+
+### Refresh token rotation
+
+```http
+POST /oauth2/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token
+&refresh_token=<refresh_token_value>
+&client_id=myclientid
+&client_secret=myclientsecret
+```
+
+Returns a new `access_token` and a new `refresh_token`. The previous refresh token is immediately invalidated — reuse returns `400 invalid_grant`.
 
 ---
 

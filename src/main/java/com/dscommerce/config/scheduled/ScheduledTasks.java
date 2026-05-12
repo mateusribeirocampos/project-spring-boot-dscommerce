@@ -24,7 +24,7 @@ public class ScheduledTasks {
     @Transactional
     public void purgeExpiredAuthorizations() {
         int deleted = jdbcTemplate.update(
-                "DELETE FROM oauth_authorization WHERE refresh_token_expires_at < NOW()"
+                "DELETE FROM oauth2_authorization WHERE refresh_token_expires_at < NOW()"
         );
         LOG.info("Purge {} expired Oauth2 authorizations", deleted);
     }
