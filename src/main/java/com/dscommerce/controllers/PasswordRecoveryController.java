@@ -25,7 +25,7 @@ public class PasswordRecoveryController {
     @Autowired
     private PasswordRecoveryService passwordRecoveryService;
 
-    @PostMapping(value = "/forgot-pagsgsssword", consumes = "application/json")
+    @PostMapping(value = "/forgot-password", consumes = "application/json")
     @Operation(summary = "Forgot Password", description = "Controller for password recovery",
             responses = {
                     @ApiResponse(description = "No Content", responseCode = "204"),
