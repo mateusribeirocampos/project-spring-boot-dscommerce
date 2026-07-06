@@ -139,8 +139,8 @@ Refresh tokens are stored in PostgreSQL via `JdbcOAuth2AuthorizationService`. Ea
 - `GET /products/{id}` — product detail
 - `GET /categories` — list all categories
 - `POST /users/register` — create account
-- `POST /users/forgot-password` — request password reset email
-- `PUT /users/reset-password` — reset password with recovery token
+- `POST /auth/forgot-password` — request password reset email
+- `POST /auth/reset-password` — reset password with recovery token
 
 ### Authenticated Endpoints
 
@@ -306,11 +306,12 @@ SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
 
 ## Testing
 
-The test suite covers three layers:
+The test suite covers multiple layers:
 
 - **Repository** — `@DataJpaTest` with H2 (query validation)
 - **Service** — `@ExtendWith(MockitoExtension.class)` (business logic isolation)
-- **Controller** — `@WebMvcTest` (HTTP behavior, validation, exception handling)
+- **Controller unit tests** — `@WebMvcTest` (HTTP behavior, validation, exception handling)
+- **Integration tests** — `@SpringBootTest` + `MockMvc` (real Spring context, security filters, JWT flow, and H2 database)
 
 Main testing tools used in the project include:
 
@@ -321,7 +322,7 @@ Main testing tools used in the project include:
 - Spring Security Test
 - JaCoCo — code coverage reports generated on every build, with a minimum 40% line coverage gate enforced via `mvn verify`
 
-The test suite is continuously being refined to improve consistency and maintainability in the current Java 21 environment.
+Use `./mvnw test` for the fast unit/controller slice suite. Use `./mvnw verify` before publishing changes; this also runs `*IT` integration tests through Failsafe and enforces the JaCoCo coverage gate.
 
 ### Running with Docker
 

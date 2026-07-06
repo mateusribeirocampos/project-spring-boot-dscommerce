@@ -2,6 +2,7 @@ package com.dscommerce.services;
 
 import com.dscommerce.dto.OrderDTO;
 import com.dscommerce.dto.OrderItemDTO;
+import com.dscommerce.dto.OrderSummaryDTO;
 import com.dscommerce.entities.*;
 import com.dscommerce.entities.enums.OrderStatus;
 import com.dscommerce.repositories.OrderItemRepository;
@@ -16,12 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
 
 @Service
 public class OrderService {
@@ -50,10 +51,10 @@ public class OrderService {
     private EmailFactory emailFactory;
 
     @Transactional(readOnly = true)
-    public List<OrderDTO> findAll() {
+    public Page<OrderSummaryDTO> findAll(String clientName, Pageable pageable) {
         logger.info("Finding all orders");
-        List<Order> orderPage = orderRepository.findAll();
-        return orderPage.stream().map(OrderDTO::new).toList();
+        return orderRepository.searchByClientName(clientName, pageable)
+                .map(OrderSummaryDTO::new);
     }
 
     @Transactional(readOnly = true)
@@ -117,13 +118,13 @@ public class OrderService {
         }
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS)
+    @Transactional
     public void delete(Long id) {
         logger.info("Deleting a order by id: {}", id);
-        if (!orderRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Resource not found for id: " + id);
-        }
         try {
+            Order order = orderRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Resource not found id " + id));
+            orderItemRepository.deleteAll(order.getItems());
          orderRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Referential integrity failure");

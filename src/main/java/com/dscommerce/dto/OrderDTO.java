@@ -68,6 +68,30 @@ public class OrderDTO {
         return items;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setMoment(Instant moment) {
+        this.moment = moment;
+    }
+
+    public void setOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public void setClient(ClientDTO client) {
+        this.client = client;
+    }
+
+    public void setPayment(PaymentDTO payment) {
+        this.payment = payment;
+    }
+
+    public void setItems(List<OrderItemDTO> items) {
+        this.items = items;
+    }
+
     public Double getTotal() {
         double sum = 0.0;
         for (OrderItemDTO item : items) {

@@ -56,7 +56,7 @@ public class ProductControllerIT {
                         .accept(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.totalElements").value(countTotalProducts));
+        result.andExpect(jsonPath("$.page.totalElements").value(countTotalProducts));
         result.andExpect(jsonPath("$.content").exists());
         result.andExpect(jsonPath("$.content[0].name").value("Macbook Pro"));
         result.andExpect(jsonPath("$.content[0].price").value(1250.0));
