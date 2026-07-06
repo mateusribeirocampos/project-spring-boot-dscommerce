@@ -2,6 +2,7 @@ package com.dscommerce.controllers;
 
 import com.dscommerce.controllers.exceptions.StandardError;
 import com.dscommerce.dto.OrderDTO;
+import com.dscommerce.dto.OrderSummaryDTO;
 import com.dscommerce.services.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,6 +13,8 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -42,9 +45,11 @@ public class OrderController {
                     @ApiResponse(description = "Forbidden", responseCode = "403",
                             content = @Content(schema = @Schema(implementation = StandardError.class))),
             })
-    public ResponseEntity<List<OrderDTO>> findAll() {
-        logger.info("GET /orders - finding all orders");
-        List<OrderDTO> dto = orderService.findAll();
+    public ResponseEntity<Page<OrderSummaryDTO>> findAll(
+            @RequestParam(name = "clientName", defaultValue = "") String clientName,
+            Pageable pageable) {
+        logger.info("GET /orders?size=21&page=0&sort=moment,asc&clientName= - finding all orders");
+        Page<OrderSummaryDTO> dto = orderService.findAll(clientName, pageable);
         return ResponseEntity.ok(dto);
     }
 
