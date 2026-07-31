@@ -41,11 +41,11 @@ WORKDIR /app
 COPY --from=builder /build/target/dscommerce-0.0.1-SNAPSHOT.jar app.jar
 
 # Porta dinâmica para Render
-EXPOSE ${PORT:-8080}
+EXPOSE 8080
 
 # Health check (opcional)
 # HEALTHCHECK --interval=30s --timeout=3s --start-period=40s \
 #  CMD curl -f http://localhost:${PORT:-8080}/actuator/health || exit 1
 
 # Comando otimizado com flags JVM
-CMD ["sh", "-c", "java -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom -Dserver.port=${PORT:-8080} -jar app.jar"]
+CMD ["sh", "-c", "java -XX:+UseContainerSupport -XX:MaxRAMPercentage=50.0 -Djava.security.egd=file:/dev/./urandom -Dserver.port=${PORT:-8080} -jar app.jar"]
