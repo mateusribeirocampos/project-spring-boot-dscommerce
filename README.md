@@ -17,7 +17,7 @@
 ![Flyway](https://img.shields.io/badge/Flyway-Migrations-CC0000?logo=flyway&logoColor=white)
 ![JaCoCo](https://img.shields.io/badge/JaCoCo-Coverage-brightgreen?logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Container-2496ED?logo=docker&logoColor=white)
-[![Actuator](https://badges.mvnrepository.com/badge/org.springframework.boot/spring-boot-starter-actuator/badge.svg?label=MvnRepository)](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator)
+![Actuator](https://img.shields.io/badge/Actuator-Health_Checks-6DB33F?logo=springboot&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger-OpenAPI_3-85EA2D?logo=swagger&logoColor=black)
 [![OpenAPI Spec](https://img.shields.io/badge/OpenAPI-v1.0.3-85EA2D?logo=swagger&logoColor=black)](docs/openapi.json)
 
