@@ -1,0 +1,42 @@
+# ==============================================================================
+# DSCOMMERCE - Base Configuration (Common to All Profiles)
+# ==============================================================================
+
+spring:
+  application:
+    name: dscommerce
+
+  # JPA/Hibernate
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: validate
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:it-data.sql
+
+  flyway:
+    enabled: true
+
+# resend email
+email:
+  from-address: ${EMAIL_FROM_ADDRESS:onboarding@resend.dev}
+  from-name: ${FROM_NAME:dscommerce}
+
+security:
+  client-id: myclientid
+  client-secret: myclientsecret
+  jwt:
+    duration-access: ${ACCESS_DURATION:900}
+    duration-refresh: ${REFRESH_DURATION:2592000}
+
+app:
+  email:
+    resetPasswordUri: "http://localhost:3000/reset-password?token="
+
+  security:
+    jwt:
+      keystore-location: classpath:certs/dscommerce-jwt.p12
+      keystore-password: ${JWT_KEYSTORE_PASSWORD:b8ZYDPrvMapad5YmSAp7/oP7eRLGersv}
+      key-alias: ${JWT_KEY_ALIAS:dscommerce-jwt}

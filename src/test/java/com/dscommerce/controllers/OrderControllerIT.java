@@ -8,6 +8,7 @@ import com.dscommerce.dto.OrderDTO;
 import com.dscommerce.dto.OrderItemDTO;
 import com.dscommerce.tests.OrderFactory;
 import com.dscommerce.tests.TokenUtil;
+import com.dscommerce.testsupport.AbstractIntegrationTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ import java.util.List;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class OrderControllerIT {
+public class OrderControllerIT extends AbstractIntegrationTest {
 
     private String usernameAdmin, usernameClient, password, bearerTokenAdmin, bearerTokenClient, bearerTokenInvalid;
     private Long existingId, nonExistingId, otherOrderId, orderId, countTotalOrders;

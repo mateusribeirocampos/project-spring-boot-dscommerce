@@ -9,6 +9,7 @@ import com.dscommerce.dto.UserInsertDTO;
 import com.dscommerce.dto.UserUpdateDTO;
 import com.dscommerce.tests.TokenUtil;
 import com.dscommerce.tests.UserFactory;
+import com.dscommerce.testsupport.AbstractIntegrationTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ import java.time.LocalDate;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class UserControllerIT {
+public class UserControllerIT extends AbstractIntegrationTest {
 
     private String username, password, bearerToken, bearerTokenInvalid;
     private Long existingId;

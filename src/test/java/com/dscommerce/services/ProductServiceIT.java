@@ -5,6 +5,7 @@ import com.dscommerce.dto.ProductMinDTO;
 import com.dscommerce.repositories.ProductRepository;
 import com.dscommerce.services.exceptions.ResourceNotFoundException;
 import com.dscommerce.tests.ProductFactory;
+import com.dscommerce.testsupport.AbstractIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-public class ProductServiceIT {
+public class ProductServiceIT extends AbstractIntegrationTest {
 
     private Long existingId, nonExistingId, countTotalProducts;
     private String productName;

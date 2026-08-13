@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.dscommerce.dto.ProductDTO;
 import com.dscommerce.tests.ProductFactory;
 import com.dscommerce.tests.TokenUtil;
+import com.dscommerce.testsupport.AbstractIntegrationTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class ProductControllerIT {
+public class ProductControllerIT extends AbstractIntegrationTest {
 
     private String username, password, bearerToken, bearerTokenInvalid;
     private Long existingId, nonExistingId, dependentId, countTotalProducts;

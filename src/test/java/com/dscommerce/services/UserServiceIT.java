@@ -5,6 +5,7 @@ import com.dscommerce.dto.UserInsertDTO;
 import com.dscommerce.dto.UserUpdateDTO;
 import com.dscommerce.repositories.UserRepository;
 import com.dscommerce.tests.UserFactory;
+import com.dscommerce.testsupport.AbstractIntegrationTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-public class UserServiceIT {
+public class UserServiceIT extends AbstractIntegrationTest {
 
     private String existingEmail, nonExistingEmail;
     private Long countTotalUsers;
