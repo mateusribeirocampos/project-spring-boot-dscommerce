@@ -178,21 +178,6 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.13</version>
-				<configuration>
-					<excludes>
-						<exclude>com/dscommerce/DscommerceApplication.class</exclude>
-						<exclude>com/dscommerce/config/**</exclude>
-						<exclude>com/dscommerce/entities/**</exclude>
-						<exclude>com/dscommerce/dto/**</exclude>
-						<exclude>com/dscommerce/controllers/exceptions/**</exclude>
-						<exclude>com/dscommerce/services/exceptions/**</exclude>
-						<exclude>com/dscommerce/services/validation/*Valid.class</exclude>
-						<exclude>com/dscommerce/projections/**</exclude>
-						<exclude>com/dscommerce/tests/**</exclude>
-						<exclude>com/dscommerce/repositories/**</exclude>
-						<exclude>com/dscommerce/DscommerceApplicationTests.class</exclude>
-					</excludes>
-				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -207,6 +192,20 @@
 						</goals>
 						<configuration>
 							<outputDirectory>target/jacoco-report</outputDirectory>
+							<excludes>
+								<exclude>com/dscommerce/DscommerceApplication.class</exclude>
+								<exclude>com/dscommerce/config/*</exclude>
+								<exclude>com/dscommerce/config/scheduled/**</exclude>
+								<exclude>com/dscommerce/entities/**</exclude>
+								<exclude>com/dscommerce/dto/**</exclude>
+								<exclude>com/dscommerce/controllers/exceptions/**</exclude>
+								<exclude>com/dscommerce/services/exceptions/**</exclude>
+								<exclude>com/dscommerce/services/validation/*Valid.class</exclude>
+								<exclude>com/dscommerce/projections/**</exclude>
+								<exclude>com/dscommerce/tests/**</exclude>
+								<exclude>com/dscommerce/repositories/**</exclude>
+								<exclude>com/dscommerce/DscommerceApplicationTests.class</exclude>
+							</excludes>
 						</configuration>
 					</execution>
 					<execution>
@@ -215,6 +214,20 @@
 							<goal>check</goal>
 						</goals>
 						<configuration>
+							<excludes>
+								<exclude>com/dscommerce/DscommerceApplication.class</exclude>
+								<exclude>com/dscommerce/config/*</exclude>
+								<exclude>com/dscommerce/config/scheduled/**</exclude>
+								<exclude>com/dscommerce/entities/**</exclude>
+								<exclude>com/dscommerce/dto/**</exclude>
+								<exclude>com/dscommerce/controllers/exceptions/**</exclude>
+								<exclude>com/dscommerce/services/exceptions/**</exclude>
+								<exclude>com/dscommerce/services/validation/*Valid.class</exclude>
+								<exclude>com/dscommerce/projections/**</exclude>
+								<exclude>com/dscommerce/tests/**</exclude>
+								<exclude>com/dscommerce/repositories/**</exclude>
+								<exclude>com/dscommerce/DscommerceApplicationTests.class</exclude>
+							</excludes>
 							<rules>
 								<rule>
 									<element>BUNDLE</element>
@@ -222,7 +235,7 @@
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.40</minimum>
+											<minimum>0.80</minimum>
 										</limit>
 									</limits>
 								</rule>
