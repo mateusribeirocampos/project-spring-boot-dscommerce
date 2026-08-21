@@ -40,7 +40,7 @@ public class OpenAPIConfig {
                 .info(new Info()
                         .title("Dscommerce (E-commerce) API")
                         .description("API REST for e-commerce. OAuth2 authentication with JWT.")
-                        .version("v1.0.3")
+                        .version("v1.0.4")
                         .license(new License().name("MIT")
                                 .url("https://github.com/mateusribeirocampos/project-spring-boot-dscommerce")))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))

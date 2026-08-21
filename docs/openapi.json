@@ -7,7 +7,7 @@
       "name": "MIT",
       "url": "https://github.com/mateusribeirocampos/project-spring-boot-dscommerce"
     },
-    "version": "v1.0.3"
+    "version": "v1.0.4"
   },
   "servers": [
     {
@@ -1035,16 +1035,32 @@
         "summary": "Find all orders",
         "description": "Controller to find all the orders",
         "operationId": "findAll_1",
+        "parameters": [
+          {
+            "name": "clientName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OrderDTO"
-                  }
+                  "$ref": "#/components/schemas/PagedModel"
                 }
               }
             }
