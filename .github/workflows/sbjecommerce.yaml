@@ -1,76 +1,66 @@
 name: Supabase Keep-Alive Ping
 
+# Mantém o projeto Supabase fora da pausa automática por inatividade.
+#
+# O Supabase free pausa após 7 DIAS sem atividade suficiente — não após um dia.
+# Por isso 1x/dia basta, e não de 6 em 6 horas: o GitHub cobra no mínimo 1
+# minuto por job, então 4x/dia custava ~120 min/mês para a mesma garantia.
+#
+# ⚠️ HISTÓRICO (31/08/2026): este workflow rodou 89 vezes VERDE sem tocar o
+# banco uma única vez. Ele chamava `SUPABASE_URL/products`, que devolvia
+# 404 "requested path is invalid" — o caminho do PostgREST é
+# /rest/v1/<tabela> e exige o header `apikey`. O projeto recebeu aviso de
+# pausa por inatividade mesmo com o ping "funcionando".
+#
+# Nada acusou porque a versão anterior foi escrita para NÃO falhar: o passo
+# final imprimia "✅ Ping conclude with successfully!" independentemente do
+# status HTTP. Verde por silêncio.
+#
+# Daí as duas regras abaixo:
+#   1. bater numa TABELA (o que gera consulta ao banco), não num health check;
+#   2. FALHAR quando falhar — senão o próximo defeito também fica invisível.
+
 on:
   schedule:
-    # Run each hour (00:00, 06:00, 12:00, 18:00 UTC)
+    # 09:13 UTC diário. Minuto fora do :00 de propósito: o agendador do GitHub
+    # é best-effort e concentra atrasos nas marcas redondas.
     - cron: '13 9 * * *'
-  workflow_dispatch:  # allow run manually
+  workflow_dispatch:
 
 jobs:
   ping-supabase:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
-      - name: Ping Supabase Database
+      - name: Consultar tb_product (atividade real de banco)
+        env:
+          URL: ${{ secrets.SUPABASE_URL }}
+          ANON: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          echo "🔄 Starting ping to Supabase..."
-          echo "Timestamp: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-
-          # Ping the Render API (your Spring Boot app)
-          response=$(curl -s -w "\n%{http_code}" \
-                "${{ secrets.SUPABASE_URL }}/products")
-
-          # Split the response body and HTTP code
-          http_code=$(echo "$response" | tail -n1)
-          body=$(echo "$response" | head -n-1)
-
-          echo "📊 HTTP Status: $http_code"
-
-          # Check if the response was successful
-          if [[ "$http_code" =~ ^2[0-9][0-9]$ ]]; then
-            echo "✅ API is active and responding!"
-            echo "Response preview: ${body:0:200}..."
-          else
-            echo "⚠️ Unexpected response (code $http_code)"
-            echo "Response: $body"
-            # The job doesn't fail, it just registers.
+          if [ -z "$URL" ] || [ -z "$ANON" ]; then
+            echo "::error::SUPABASE_URL ou SUPABASE_ANON_KEY ausente — o ping não teria como consultar o banco."
+            exit 1
           fi
 
-      - name: Verify API Health
-        run: |
-          echo "🔍 Verifying API health..."
+          # select=id&limit=1 é a consulta mais barata que ainda ATINGE a
+          # tabela: o PostgREST traduz em SELECT no Postgres, que é o que o
+          # Supabase contabiliza como atividade. Um health check do GoTrue
+          # responde 200 sem encostar no banco — foi essa a armadilha.
+          resposta=$(curl -s -m 30 -w "\n%{http_code}" \
+                       -H "apikey: $ANON" \
+                       -H "Authorization: Bearer $ANON" \
+                       "$URL/rest/v1/tb_product?select=id&limit=1")
 
-          # Try to get product count
-          response=$(curl -s -w "\n%{http_code}" \
-                "${{ secrets.SUPABASE_URL }}/products?size=1")
+          codigo=$(printf '%s' "$resposta" | tail -n1)
+          corpo=$(printf '%s' "$resposta" | sed '$d')
 
-          http_code=$(echo "$response" | tail -n1)
-          body=$(echo "$response" | head -n-1)
+          echo "HTTP $codigo"
+          echo "corpo: ${corpo:0:200}"
 
-          echo "📊 HTTP Status: $http_code"
+          if [ "$codigo" != "200" ]; then
+            echo "::error::Consulta a tb_product falhou com HTTP $codigo. O banco NÃO foi tocado e o projeto segue rumo à pausa."
+            exit 1
+          fi
 
-          case $http_code in
-            200)
-              echo "✅ API endpoint accessible!"
-              echo "Response preview: ${body:0:200}..."
-              ;;
-            404)
-              echo "⚠️ Endpoint not found (check API path)"
-              ;;
-            500)
-              echo "⚠️ Server error (database might be paused)"
-              echo "Response: $body"
-              ;;
-            *)
-              echo "⚠️ Response: $http_code"
-              echo "Body: $body"
-              ;;
-          esac
-
-      - name: Ping summarize
-        run: |
-          echo "📋 ================================"
-          echo "✅ Ping conclude with successfully!"
-          echo "🕐 Next ping in ~6 hours"
-          echo "📅 Date: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-          echo "================================"
+          echo "✅ tb_product consultada — atividade registrada no banco."
