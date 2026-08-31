@@ -22,9 +22,16 @@ name: Supabase Keep-Alive Ping
 
 on:
   schedule:
-    # 09:13 UTC diário. Minuto fora do :00 de propósito: o agendador do GitHub
-    # é best-effort e concentra atrasos nas marcas redondas.
-    - cron: '13 9 * * *'
+    # Segunda e quinta, 09:13 UTC. Folga máxima de 4 dias contra a pausa de 7
+    # — 3 dias de margem. Projeto de portfólio: o ping existe só para o banco
+    # não pausar, não para simular tráfego.
+    #
+    # NÃO "a cada 5 dias": `*/5` no dia-do-mês reinicia no dia 1, então do 26
+    # ao 1º seguinte são 6 dias, e o agendador do GitHub é best-effort (dois
+    # atrasos medidos em 30/08: 5h06 e 2h42). Dia-da-semana não tem virada.
+    #
+    # Minuto fora do :00 de propósito: as marcas redondas concentram a fila.
+    - cron: '13 9 * * 1,4'
   workflow_dispatch:
 
 jobs:
