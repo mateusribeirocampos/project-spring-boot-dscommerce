@@ -11,5 +11,18 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  rabbitmq:
+    image: rabbitmq:3-management #management
+    container_name: dscommerce-rabbitmq
+    ports:
+      - "5672:5672" # AMQP port, the app connect here
+      - "15672:15672" # web panel
+    environment:
+      RABBITMQ_DEFAULT_USER: ${TEST_DB_USER}
+      RABBITMQ_DEFAULT_PASS: ${TEST_DB_PSWDB}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
 volumes:
   postgres_data:
+  rabbitmq_data:
