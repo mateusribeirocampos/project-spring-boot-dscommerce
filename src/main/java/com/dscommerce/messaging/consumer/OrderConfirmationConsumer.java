@@ -20,7 +20,7 @@ public class OrderConfirmationConsumer {
     }
 
     @RabbitListener(queues = RabbitMQConstants.QUEUE_ORDER_CONFIRMATION)
-    public void listen(OrderConfirmationMessage message) {git
+    public void listen(OrderConfirmationMessage message) {
         EmailDTO dto = mapper.toEmailDTO(message);
         emailService.plainTextEmail(dto);
     }

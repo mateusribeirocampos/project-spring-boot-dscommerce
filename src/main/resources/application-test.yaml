@@ -3,6 +3,11 @@
 # ==============================================================================
 
 spring:
+  # RabbitMQ configuration
+  rabbitmq:
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
   # DataSource
   datasource:
     driver-class-name: org.h2.Driver
