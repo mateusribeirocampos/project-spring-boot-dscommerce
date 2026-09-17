@@ -1,11 +1,14 @@
 package com.dscommerce.services.email;
 
 import com.dscommerce.dto.EmailDTO;
-import com.dscommerce.entities.Order;
-import com.dscommerce.entities.OrderItem;
 import com.dscommerce.entities.User;
+import com.dscommerce.entities.enums.OrderStatus;
+import com.dscommerce.messaging.payload.OrderConfirmationItem;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.time.Instant;
+import java.util.List;
 
 @Component
 public class EmailFactory {
@@ -16,24 +19,23 @@ public class EmailFactory {
     @Value("${email.from-name}")
     private String fromName;
 
-    public EmailDTO buildOrderConfirmationEmail(User user, Order order) {
-
-        double total = order.getItems().stream()
-                .mapToDouble(item -> item.getPrice() * item.getQuantity()).sum();
+    public EmailDTO buildOrderConfirmationEmail(Long orderId, String clientName,
+                                                String clientEmail, Instant moment, OrderStatus status,
+                                                List<OrderConfirmationItem> items, double total) {
 
         StringBuilder rows = new StringBuilder();
-        for (OrderItem item : order.getItems()) {
-            double subtotal = item.getPrice() * item.getQuantity();
+        for (OrderConfirmationItem item : items) {
+            double subtotal = item.price() * item.quantity();
             rows.append(String.format(
                     "<tr><td>%s</td><td>%d</td><td>$ %.2f</td><td>$ %.2f</td></tr>",
-                    item.getProduct().getName(),
-                    item.getQuantity(),
-                    item.getPrice(),
+                    item.productName(),
+                    item.quantity(),
+                    item.price(),
                     subtotal
             ));
         }
 
-        String subject = "Order confirmed #" + order.getId();
+        String subject = "Order confirmed #" + orderId;
         String body = String.format("""                                                                                                                                    
       <h2>Order Confirmation #%d</h2>
       <p>Hello, <strong>%s</strong>!</p>
@@ -51,13 +53,13 @@ public class EmailFactory {
   
       <p><strong>Total: $ %.2f</strong></p>
       <p>Thank you for your purchase!</p>
-      """, order.getId(), user.getName(), order.getMoment(), order.getStatus(), rows, total);
+      """, orderId, clientName, moment, status, rows, total);
 
         return new EmailDTO(
                 "DSCommerce <" + fromAddress +">",
                 fromName,
                 null,
-                user.getEmail(),
+                clientEmail,
                 subject,
                 body,
                 "text/html"

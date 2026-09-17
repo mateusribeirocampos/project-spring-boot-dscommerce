@@ -5,11 +5,10 @@ import com.dscommerce.dto.OrderItemDTO;
 import com.dscommerce.dto.OrderSummaryDTO;
 import com.dscommerce.entities.*;
 import com.dscommerce.entities.enums.OrderStatus;
+import com.dscommerce.messaging.publisher.OrderEventPublisher;
 import com.dscommerce.repositories.OrderItemRepository;
 import com.dscommerce.repositories.OrderRepository;
 import com.dscommerce.repositories.ProductRepository;
-import com.dscommerce.services.email.EmailFactory;
-import com.dscommerce.services.email.EmailService;
 import com.dscommerce.services.exceptions.DatabaseException;
 import com.dscommerce.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
@@ -45,10 +44,7 @@ public class OrderService {
     private AuthService authService;
 
     @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private EmailFactory emailFactory;
+    private OrderEventPublisher orderEventPublisher;
 
     @Transactional(readOnly = true)
     public Page<OrderSummaryDTO> findAll(String clientName, Pageable pageable) {
@@ -88,7 +84,11 @@ public class OrderService {
         orderRepository.save(order);
         orderItemRepository.saveAll(order.getItems());
 
-        emailService.plainTextEmail(emailFactory.buildOrderConfirmationEmail(user, order));
+        /**
+         * Spring Boot's @Async has been removed in favor of using the RabbitMQ broker.
+         * The application now features decoupled messaging.
+         */
+        orderEventPublisher.publishOrderCreated(user, order);
         return new OrderDTO(order);
     }
 
