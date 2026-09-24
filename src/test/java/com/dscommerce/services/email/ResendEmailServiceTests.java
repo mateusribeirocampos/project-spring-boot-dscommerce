@@ -6,6 +6,7 @@ import com.resend.core.exception.ResendException;
 import com.resend.services.emails.Emails;
 import com.resend.services.emails.model.CreateEmailOptions;
 import com.resend.services.emails.model.CreateEmailResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -53,14 +54,16 @@ public class ResendEmailServiceTests {
     }
 
     @Test
-    public void  shouldNotThrowExceptionWhenResendFails() throws ResendException {
+    public void  shouldThrowRuntimeExceptionWhenResendFails() throws ResendException {
         EmailDTO emailDTO = new EmailDTO(
                 "from@test.com", "From Name", "reply@test.com",
                 "to@test.com", "Subject", "Body", "text/plain"
         );
         Mockito.when(resend.emails()).thenReturn(emails);
         Mockito.when(emails.send(Mockito.any(CreateEmailOptions.class))).thenThrow(new ResendException("Erro simulado"));
-        emailService.plainTextEmail(emailDTO);
+        Assertions.assertThrows(RuntimeException.class, () -> {
+           emailService.plainTextEmail(emailDTO);
+        });
         Mockito.verify(emails).send(Mockito.any(CreateEmailOptions.class));
     }
 
