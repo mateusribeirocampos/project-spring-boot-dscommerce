@@ -10,12 +10,6 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.retry.RetryCallback;
-import org.springframework.retry.RetryContext;
-import org.springframework.retry.RetryListener;
-import org.springframework.retry.backoff.ExponentialBackOffPolicy;
-import org.springframework.retry.policy.SimpleRetryPolicy;
-import org.springframework.retry.support.RetryTemplate;
 
 import static com.dscommerce.messaging.RabbitMQConstants.*;
 
@@ -67,36 +61,12 @@ public class RabbitMQConfig {
     }
 
     @Bean RabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
-
-        /*
-        * RetryTemplate to test the fail of delivery the email
-        * */
-        RetryTemplate retryTemplate = new RetryTemplate();
-
-        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
-        retryPolicy.setMaxAttempts(3);
-        retryTemplate.setRetryPolicy(retryPolicy);
-
-        ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();
-        backOffPolicy.setInitialInterval(1000);
-        backOffPolicy.setMultiplier(2.0);
-        backOffPolicy.setMaxInterval(10000);
-        retryTemplate.setBackOffPolicy(backOffPolicy);
-
-        retryTemplate.setListeners(new RetryListener[]{
-              new RetryListener() {
-                  @Override
-                  public <T, E extends Throwable> void onError(RetryContext context, RetryCallback<T, E> callback, Throwable throwable) {
-                      System.out.println("Tentativa " + context.getRetryCount() + " falhou " + throwable.getMessage());
-                  }
-              }
-        });
-
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         factory.setMessageConverter(messageConverter);
         factory.setAdviceChain(RetryInterceptorBuilder.stateless()
-                .retryOperations(retryTemplate)
+                .maxAttempts(3)
+                .backOffOptions(1000, 2.0, 10000)
                 .recoverer(new RejectAndDontRequeueRecoverer())
                 .build());
         return factory;
