@@ -8,7 +8,6 @@ import com.resend.services.emails.model.CreateEmailResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 
 public class ResendEmailService implements EmailService {
 
@@ -17,7 +16,6 @@ public class ResendEmailService implements EmailService {
     @Autowired
     private Resend resend;
 
-    @Async("emailTaskExecutor")
     @Override
     public void plainTextEmail(EmailDTO dto) {
 
@@ -40,7 +38,7 @@ public class ResendEmailService implements EmailService {
             LOG.info(response.getId());
             LOG.info("Email sent with success!");
         } catch (ResendException e) {
-            LOG.error("Failed to send email to {}: {}", dto.getToEmail(), e.getMessage());
+            throw new RuntimeException("Failed to send email to: " + dto.getToEmail(), e);
         }
     }
 }

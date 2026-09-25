@@ -4,6 +4,7 @@ import com.dscommerce.dto.EmailDTO;
 import com.dscommerce.entities.User;
 import com.dscommerce.entities.enums.OrderStatus;
 import com.dscommerce.messaging.payload.OrderConfirmationItem;
+import com.dscommerce.messaging.payload.OrderConfirmationMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,12 +20,10 @@ public class EmailFactory {
     @Value("${email.from-name}")
     private String fromName;
 
-    public EmailDTO buildOrderConfirmationEmail(Long orderId, String clientName,
-                                                String clientEmail, Instant moment, OrderStatus status,
-                                                List<OrderConfirmationItem> items, double total) {
+    public EmailDTO buildOrderConfirmationEmail(OrderConfirmationMessage message) {
 
         StringBuilder rows = new StringBuilder();
-        for (OrderConfirmationItem item : items) {
+        for (OrderConfirmationItem item : message.orderItems()) {
             double subtotal = item.price() * item.quantity();
             rows.append(String.format(
                     "<tr><td>%s</td><td>%d</td><td>$ %.2f</td><td>$ %.2f</td></tr>",
@@ -35,7 +34,7 @@ public class EmailFactory {
             ));
         }
 
-        String subject = "Order confirmed #" + orderId;
+        String subject = "Order confirmed #" + message.orderId();
         String body = String.format("""                                                                                                                                    
       <h2>Order Confirmation #%d</h2>
       <p>Hello, <strong>%s</strong>!</p>
@@ -53,13 +52,13 @@ public class EmailFactory {
   
       <p><strong>Total: $ %.2f</strong></p>
       <p>Thank you for your purchase!</p>
-      """, orderId, clientName, moment, status, rows, total);
+      """, message.orderId(), message.clientName(), message.moment(), message.status(), rows, message.total());
 
         return new EmailDTO(
                 "DSCommerce <" + fromAddress +">",
                 fromName,
                 null,
-                clientEmail,
+                message.clientEmail(),
                 subject,
                 body,
                 "text/html"

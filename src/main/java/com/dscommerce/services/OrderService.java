@@ -5,6 +5,8 @@ import com.dscommerce.dto.OrderItemDTO;
 import com.dscommerce.dto.OrderSummaryDTO;
 import com.dscommerce.entities.*;
 import com.dscommerce.entities.enums.OrderStatus;
+import com.dscommerce.messaging.event.OrderCreatedEvent;
+import com.dscommerce.messaging.event.OrderItemData;
 import com.dscommerce.messaging.publisher.OrderEventPublisher;
 import com.dscommerce.repositories.OrderItemRepository;
 import com.dscommerce.repositories.OrderRepository;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -84,11 +87,19 @@ public class OrderService {
         orderRepository.save(order);
         orderItemRepository.saveAll(order.getItems());
 
-        /**
-         * Spring Boot's @Async has been removed in favor of using the RabbitMQ broker.
-         * The application now features decoupled messaging.
-         */
-        orderEventPublisher.publishOrderCreated(user, order);
+        List<OrderItemData> items = order.getItems().stream()
+                .map(item -> new OrderItemData(item.getProduct().getName(),
+                        item.getQuantity(), item.getPrice()))
+                .toList();
+
+        double total = items.stream().mapToDouble(
+                i -> i.price() * i.quantity()).sum();
+
+        OrderCreatedEvent event = new OrderCreatedEvent(order.getId(),
+                user.getName(), user.getEmail(), order.getMoment(),
+                order.getStatus(), items, total
+        );
+        orderEventPublisher.publishOrderCreated(event);
         return new OrderDTO(order);
     }
 
