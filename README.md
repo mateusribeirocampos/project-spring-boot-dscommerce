@@ -20,6 +20,7 @@
 ![Actuator](https://img.shields.io/badge/Actuator-Health_Checks-6DB33F?logo=springboot&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger-OpenAPI_3-85EA2D?logo=swagger&logoColor=black)
 [![OpenAPI Spec](https://img.shields.io/badge/OpenAPI-v1.0.4-85EA2D?logo=swagger&logoColor=black)](docs/openapi.json)
+![RabbitMQ](https://img.shields.io/badge/-rabbitmq-%23FF6600?style=flat&logo=rabbitmq&logoColor=white)
 
 A backend-focused e-commerce API built with Spring Boot, designed to showcase secure authentication and authorization, role-based access control, layered architecture, JPA entity relationships, validation, exception handling, automated tests, and production-oriented deployment.
 
