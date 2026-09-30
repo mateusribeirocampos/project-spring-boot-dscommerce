@@ -88,7 +88,7 @@ public class OrderController {
                     content = @Content(schema = @Schema(implementation = StandardError.class)))
     })
     public ResponseEntity<OrderDTO> insert(@Valid @RequestBody OrderDTO dto) {
-        logger.info("POST /orders - creating a order {}", dto.getClient());
+        logger.info("POST /orders - creating a order, quantity of items: {}", dto.getItems().size());
         dto = orderService.insert(dto);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
