@@ -33,9 +33,9 @@ public class ResendEmailService implements EmailService {
         CreateEmailOptions params = builder.build();
 
         try {
-            LOG.info("Sending email to: {}", dto.getToEmail());
+            LOG.info("Sending email...");
             CreateEmailResponse response = resend.emails().send(params);
-            LOG.info(response.getId());
+            LOG.info("Email sent, id: {}", response.getId());
             LOG.info("Email sent with success!");
         } catch (ResendException e) {
             throw new RuntimeException("Failed to send email to: " + dto.getToEmail(), e);

@@ -67,7 +67,7 @@ public class OrderService {
 
     @Transactional
     public OrderDTO insert(OrderDTO dto) {
-        logger.info("Creating a order {}", dto.getClient());
+        logger.info("Creating a order");
         Order order = new Order();
         order.setMoment(Instant.now());
         order.setStatus(OrderStatus.WAITING_PAYMENT);
@@ -86,7 +86,7 @@ public class OrderService {
         }
         orderRepository.save(order);
         orderItemRepository.saveAll(order.getItems());
-
+        logger.info("Order created: id = {}, userId: {}", order.getId(), user.getId());
         List<OrderItemData> items = order.getItems().stream()
                 .map(item -> new OrderItemData(item.getProduct().getName(),
                         item.getQuantity(), item.getPrice()))
