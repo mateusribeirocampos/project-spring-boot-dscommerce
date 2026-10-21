@@ -24,7 +24,7 @@ public class EmailFactory {
     public EmailDTO buildOrderConfirmationEmail(OrderConfirmationMessage message) {
 
         StringBuilder rows = new StringBuilder();
-        for (OrderConfirmationItem item : message.orderItems()) {
+        for (OrderConfirmationItem item : message.items()) {
             BigDecimal subtotal = item.price().multiply(BigDecimal.valueOf(item.quantity()));
             rows.append(String.format(
                     "<tr><td>%s</td><td>%d</td><td>$ %.2f</td><td>$ %.2f</td></tr>",

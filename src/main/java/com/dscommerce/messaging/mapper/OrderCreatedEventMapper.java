@@ -17,7 +17,7 @@ public class OrderCreatedEventMapper {
                 event.clientEmail(),
                 event.moment(),
                 toConfirmationStatus(event.status()),
-                event.orderItems().stream().map(item -> new OrderConfirmationItem(item.productName(), item.quantity(), item.price())).toList(),
+                event.items().stream().map(item -> new OrderConfirmationItem(item.productName(), item.quantity(), item.price())).toList(),
                 event.total()
         );
     }
