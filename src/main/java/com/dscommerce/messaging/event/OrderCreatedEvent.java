@@ -12,10 +12,10 @@ public record OrderCreatedEvent(
         String clientEmail,
         Instant moment,
         OrderStatus status,
-        List<OrderItemData> orderItems,
+        List<OrderItemData> items,
         BigDecimal total
 ) {
     public OrderCreatedEvent {
-        orderItems = List.copyOf(orderItems);
+        items = List.copyOf(items);
     }
 }

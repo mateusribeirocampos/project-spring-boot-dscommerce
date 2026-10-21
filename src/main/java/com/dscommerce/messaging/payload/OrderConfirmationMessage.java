@@ -10,10 +10,10 @@ public record OrderConfirmationMessage(
         String clientEmail,
         Instant moment,
         OrderConfirmationStatus status,
-        List<OrderConfirmationItem> orderItems,
+        List<OrderConfirmationItem> items,
         BigDecimal total
 ) {
     public OrderConfirmationMessage {
-        orderItems = List.copyOf(orderItems);
+        items = List.copyOf(items);
     }
 }

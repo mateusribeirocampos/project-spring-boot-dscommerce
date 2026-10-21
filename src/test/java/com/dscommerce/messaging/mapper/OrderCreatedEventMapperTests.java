@@ -48,10 +48,10 @@ public class OrderCreatedEventMapperTests {
         OrderCreatedEvent event = OrderCreatedEventFactory.orderCreatedEvent();
         OrderConfirmationMessage message = orderCreatedEventMapper.toMessage(event);
 
-        Assertions.assertEquals(event.orderItems().size(), message.orderItems().size());
-        Assertions.assertEquals(event.orderItems().getFirst().productName(), message.orderItems().getFirst().productName());
-        Assertions.assertEquals(event.orderItems().getFirst().quantity(), message.orderItems().getFirst().quantity());
-        Assertions.assertEquals(event.orderItems().getFirst().price(), message.orderItems().getFirst().price());
+        Assertions.assertEquals(event.items().size(), message.items().size());
+        Assertions.assertEquals(event.items().getFirst().productName(), message.items().getFirst().productName());
+        Assertions.assertEquals(event.items().getFirst().quantity(), message.items().getFirst().quantity());
+        Assertions.assertEquals(event.items().getFirst().price(), message.items().getFirst().price());
     }
 
     @Test
