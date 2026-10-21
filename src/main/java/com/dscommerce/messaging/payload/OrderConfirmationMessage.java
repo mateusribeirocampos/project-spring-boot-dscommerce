@@ -2,6 +2,7 @@ package com.dscommerce.messaging.payload;
 
 import java.time.Instant;
 import java.util.List;
+import java.math.BigDecimal;
 
 public record OrderConfirmationMessage(
         Long orderId,
@@ -10,7 +11,7 @@ public record OrderConfirmationMessage(
         Instant moment,
         OrderConfirmationStatus status,
         List<OrderConfirmationItem> orderItems,
-        Double total
+        BigDecimal total
 ) {
     public OrderConfirmationMessage {
         orderItems = List.copyOf(orderItems);

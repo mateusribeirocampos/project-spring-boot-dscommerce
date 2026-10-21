@@ -1,18 +1,19 @@
 package com.dscommerce.dto;
 
 import com.dscommerce.entities.OrderItem;
+import java.math.BigDecimal;
 
 public class OrderItemDTO {
 
     private Long productId;
     private String name;
-    private Double price;
+    private BigDecimal price;
     private Integer quantity;
     private String imgUrl;
 
     public OrderItemDTO(){}
 
-    public OrderItemDTO(Long productId, String name, Double price, Integer quantity, String imgUrl) {
+    public OrderItemDTO(Long productId, String name, BigDecimal price, Integer quantity, String imgUrl) {
         this.productId = productId;
         this.name = name;
         this.price = price;
@@ -36,7 +37,7 @@ public class OrderItemDTO {
         return name;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
@@ -48,7 +49,7 @@ public class OrderItemDTO {
         return imgUrl;
     }
 
-    public Double getSubTotal() {
-        return quantity * price;
+    public BigDecimal getSubTotal() {
+        return price.multiply(BigDecimal.valueOf(quantity));
     }
 }

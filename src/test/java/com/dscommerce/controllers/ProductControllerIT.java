@@ -19,6 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -105,7 +107,7 @@ public class ProductControllerIT extends AbstractIntegrationTest {
         // Dados explícitos intencionalmente para legibilidade do cenário de teste
         productDTO.setName("Flash driver 2TB");
         productDTO.setDescription("A flash drive is a small, portable, and durable data storage");
-        productDTO.setPrice(25.90);
+        productDTO.setPrice(new BigDecimal("25.90"));
         productDTO.setImgUrl("https://www.walmart.com/c/kp/2tb-usb-flash-drive-drives");
         String jsonBody = objectMapper.writeValueAsString(productDTO);
 
@@ -130,7 +132,7 @@ public class ProductControllerIT extends AbstractIntegrationTest {
         // Dados explícitos intencionalmente para legibilidade do cenário de teste
         productDTO.setName("Flash driver 2TB");
         productDTO.setDescription("A flash drive is a small, portable, and durable data storage");
-        productDTO.setPrice(25.90);
+        productDTO.setPrice(new BigDecimal("25.90"));
         productDTO.setImgUrl("https://www.walmart.com/c/kp/2tb-usb-flash-drive-drives");
         String jsonBody = objectMapper.writeValueAsString(productDTO);
 
@@ -150,7 +152,7 @@ public class ProductControllerIT extends AbstractIntegrationTest {
         // Dados explícitos intencionalmente para legibilidade do cenário de teste
         productDTO.setName(" ");
         productDTO.setDescription("A flash drive is a small, portable, and durable data storage");
-        productDTO.setPrice(25.90);
+        productDTO.setPrice(new BigDecimal("25.90"));
         productDTO.setImgUrl("https://www.walmart.com/c/kp/2tb-usb-flash-drive-drives");
         String jsonBody = objectMapper.writeValueAsString(productDTO);
 
@@ -170,7 +172,7 @@ public class ProductControllerIT extends AbstractIntegrationTest {
         // Dados explícitos intencionalmente para legibilidade do cenário de teste
         productDTO.setName("Flash driver 2TB");
         productDTO.setDescription(" ");
-        productDTO.setPrice(25.90);
+        productDTO.setPrice(new BigDecimal("25.90"));
         productDTO.setImgUrl("https://www.walmart.com/c/kp/2tb-usb-flash-drive-drives");
         String jsonBody = objectMapper.writeValueAsString(productDTO);
 
@@ -190,7 +192,7 @@ public class ProductControllerIT extends AbstractIntegrationTest {
         // Dados explícitos intencionalmente para legibilidade do cenário de teste
         productDTO.setName("Flash driver 2TB");
         productDTO.setDescription("A flash drive is a small, portable, and durable data storage");
-        productDTO.setPrice(-29.0);
+        productDTO.setPrice(new BigDecimal("-29.0"));
         productDTO.setImgUrl("https://www.walmart.com/c/kp/2tb-usb-flash-drive-drives");
         String jsonBody = objectMapper.writeValueAsString(productDTO);
 
@@ -210,7 +212,7 @@ public class ProductControllerIT extends AbstractIntegrationTest {
         // Dados explícitos intencionalmente para legibilidade do cenário de teste
         productDTO.setName("Flash driver 2TB");
         productDTO.setDescription("A flash drive is a small, portable, and durable data storage");
-        productDTO.setPrice(25.90);
+        productDTO.setPrice(new BigDecimal("25.90"));
         productDTO.setImgUrl(" ");
         String jsonBody = objectMapper.writeValueAsString(productDTO);
 

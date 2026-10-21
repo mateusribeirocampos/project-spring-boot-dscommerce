@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @SpringBootTest
 @Transactional
 public class ProductServiceIT extends AbstractIntegrationTest {
@@ -84,7 +86,7 @@ public class ProductServiceIT extends AbstractIntegrationTest {
         Assertions.assertNotNull(result.getId());
         Assertions.assertEquals(countTotalProducts + 1, productRepository.count());
         Assertions.assertEquals("PC Gamer WW", result.getName());
-        Assertions.assertEquals(1350.0, result.getPrice());
+        Assertions.assertEquals(0, BigDecimal.valueOf(1350.0).compareTo(result.getPrice()));
     }
 
     @Test
@@ -94,7 +96,7 @@ public class ProductServiceIT extends AbstractIntegrationTest {
         Assertions.assertNotNull(result);
         Assertions.assertNotNull(result.getId());
         Assertions.assertEquals("PC Gamer WW", result.getName());
-        Assertions.assertEquals(1350.0, result.getPrice());
+        Assertions.assertEquals(0, BigDecimal.valueOf(1350.0).compareTo(result.getPrice()));
     }
 
     @Test

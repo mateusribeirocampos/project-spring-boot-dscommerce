@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotEmpty;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.math.BigDecimal;
 
 public class OrderDTO {
 
@@ -92,10 +93,10 @@ public class OrderDTO {
         this.items = items;
     }
 
-    public Double getTotal() {
-        double sum = 0.0;
+    public BigDecimal getTotal() {
+        BigDecimal sum = BigDecimal.ZERO;
         for (OrderItemDTO item : items) {
-            sum += item.getSubTotal();
+            sum = sum.add(item.getSubTotal());
         }
         return sum;
     }

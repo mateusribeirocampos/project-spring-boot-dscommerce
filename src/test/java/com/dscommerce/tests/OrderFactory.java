@@ -8,6 +8,7 @@ import com.dscommerce.entities.Payment;
 import com.dscommerce.entities.User;
 import com.dscommerce.entities.enums.OrderStatus;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 public class OrderFactory {
@@ -20,7 +21,8 @@ public class OrderFactory {
 
     public static OrderDTO createOrderDTO() {
         OrderDTO orderDTO = new OrderDTO(createOrder());
-        OrderItemDTO itemDTO = new OrderItemDTO(1L, "Flash Drive 1TB", 100.0, 1, "https://m.media-amazon.com/images/I/71eKXcpG0vL._AC_SX425_.jpg");
+        OrderItemDTO itemDTO = new OrderItemDTO(1L, "Flash Drive 1TB", new BigDecimal("100.0"), 1,
+                "https://m.media-amazon.com/images/I/71eKXcpG0vL._AC_SX425_.jpg");
         orderDTO.getItems().add(itemDTO);
         return orderDTO;
     }

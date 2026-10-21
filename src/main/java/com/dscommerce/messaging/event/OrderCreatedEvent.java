@@ -4,6 +4,7 @@ import com.dscommerce.entities.enums.OrderStatus;
 
 import java.time.Instant;
 import java.util.List;
+import java.math.BigDecimal;
 
 public record OrderCreatedEvent(
         Long orderId,
@@ -12,7 +13,7 @@ public record OrderCreatedEvent(
         Instant moment,
         OrderStatus status,
         List<OrderItemData> orderItems,
-        Double total
+        BigDecimal total
 ) {
     public OrderCreatedEvent {
         orderItems = List.copyOf(orderItems);

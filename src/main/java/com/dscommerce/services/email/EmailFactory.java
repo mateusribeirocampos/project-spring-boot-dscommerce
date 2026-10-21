@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
+import java.math.BigDecimal;
 
 @Component
 public class EmailFactory {
@@ -24,7 +25,7 @@ public class EmailFactory {
 
         StringBuilder rows = new StringBuilder();
         for (OrderConfirmationItem item : message.orderItems()) {
-            double subtotal = item.price() * item.quantity();
+            BigDecimal subtotal = item.price().multiply(BigDecimal.valueOf(item.quantity()));
             rows.append(String.format(
                     "<tr><td>%s</td><td>%d</td><td>$ %.2f</td><td>$ %.2f</td></tr>",
                     item.productName(),

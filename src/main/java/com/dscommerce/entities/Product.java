@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "tb_product")
@@ -17,7 +18,7 @@ public class Product {
 
     @Column(columnDefinition = "TEXT")
     private String description;
-    private Double price;
+    private BigDecimal price;
     private String imgUrl;
 
     @ManyToMany
@@ -32,7 +33,7 @@ public class Product {
 
     public Product() {}
 
-    public Product(Long id, String name, String description, Double price, String imgUrl) {
+    public Product(Long id, String name, String description, BigDecimal price, String imgUrl) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -64,11 +65,11 @@ public class Product {
         this.description = description;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.math.BigDecimal;
 
 @Service
 public class OrderService {
@@ -92,8 +93,8 @@ public class OrderService {
                         item.getQuantity(), item.getPrice()))
                 .toList();
 
-        double total = items.stream().mapToDouble(
-                i -> i.price() * i.quantity()).sum();
+        BigDecimal total = items.stream().map(i -> i.price().multiply(BigDecimal.valueOf(i.quantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         OrderCreatedEvent event = new OrderCreatedEvent(order.getId(),
                 user.getName(), user.getEmail(), order.getMoment(),
