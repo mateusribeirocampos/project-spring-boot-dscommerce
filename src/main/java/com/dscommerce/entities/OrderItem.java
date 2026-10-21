@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 import java.util.Objects;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "tb_order_item")
@@ -15,12 +16,12 @@ public class OrderItem {
     private OrderItemPk id = new OrderItemPk();
 
     private Integer quantity;
-    private Double price;
+    private BigDecimal price;
 
     public OrderItem() {
     }
 
-    public OrderItem(Order order, Product product, Integer quantity, Double price) {
+    public OrderItem(Order order, Product product, Integer quantity, BigDecimal price) {
         id.setOrder(order);
         id.setProduct(product);
         this.quantity = quantity;
@@ -51,11 +52,11 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

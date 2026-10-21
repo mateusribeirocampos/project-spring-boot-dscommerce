@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @SpringBootTest
@@ -173,7 +174,7 @@ public class OrderControllerIT extends AbstractIntegrationTest {
     @Test
     public void insertShouldReturnNewOrderWhenUserIsAuthenticated() throws Exception {
         OrderDTO orderDTO = OrderFactory.createOrderDTO();
-        orderDTO.setItems(List.of(new OrderItemDTO(1L, "The Lord of the Rings", 90.5, 2,
+        orderDTO.setItems(List.of(new OrderItemDTO(1L, "The Lord of the Rings", new BigDecimal("90.5"), 2,
                 "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg")));
 
         String jsonBody = objectMapper.writeValueAsString(orderDTO);
@@ -213,7 +214,7 @@ public class OrderControllerIT extends AbstractIntegrationTest {
     @Test
     public void updateShouldReturnOrderDTOUpdatedWhenAdminIsAuthenticated() throws Exception {
         OrderDTO orderDTO = OrderFactory.createOrderDTO();
-        orderDTO.setItems(List.of(new OrderItemDTO(1L, "The Lord of the Rings", 90.5, 2,
+        orderDTO.setItems(List.of(new OrderItemDTO(1L, "The Lord of the Rings", new BigDecimal("90.5"), 2,
                 "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg")));
 
         String jsonBody = objectMapper.writeValueAsString(orderDTO);
@@ -239,7 +240,7 @@ public class OrderControllerIT extends AbstractIntegrationTest {
     @Test
     public void updateShouldReturnUnauthorizedWhenUserIsNotAuthenticated() throws Exception {
         OrderDTO orderDTO = OrderFactory.createOrderDTO();
-        orderDTO.setItems(List.of(new OrderItemDTO(1L, "The Lord of the Rings", 90.5, 2,
+        orderDTO.setItems(List.of(new OrderItemDTO(1L, "The Lord of the Rings", new BigDecimal("90.5"), 2,
                 "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg")));
 
         String jsonBody = objectMapper.writeValueAsString(orderDTO);
@@ -257,7 +258,7 @@ public class OrderControllerIT extends AbstractIntegrationTest {
     @Test
     public void updateShouldReturnForbiddenWhenUserIsNotAdmin() throws Exception {
         OrderDTO orderDTO = OrderFactory.createOrderDTO();
-        orderDTO.setItems(List.of(new OrderItemDTO(1L, "The Lord of the Rings", 90.5, 2,
+        orderDTO.setItems(List.of(new OrderItemDTO(1L, "The Lord of the Rings", new BigDecimal("90.5"), 2,
                 "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg")));
 
         String jsonBody = objectMapper.writeValueAsString(orderDTO);

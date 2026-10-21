@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.URL;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.math.BigDecimal;
 
 public class ProductDTO {
 
@@ -22,7 +23,7 @@ public class ProductDTO {
 
     @NotNull(message = "This field is required")
     @Positive(message = "Price must be positive")
-    private Double price;
+    private BigDecimal price;
 
     @NotBlank(message = "URL of image must not be empty")
     @URL(message = "Invalid URL")
@@ -33,7 +34,7 @@ public class ProductDTO {
 
     public ProductDTO(){}
 
-    public ProductDTO(Long id, String name, String description, Double price, String imgUrl) {
+    public ProductDTO(Long id, String name, String description, BigDecimal price, String imgUrl) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -76,11 +77,11 @@ public class ProductDTO {
         this.description = description;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

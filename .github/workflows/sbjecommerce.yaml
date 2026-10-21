@@ -1,38 +1,8 @@
 name: Supabase Keep-Alive Ping
-
-# Mantém o projeto Supabase fora da pausa automática por inatividade.
-#
-# O Supabase free pausa após 7 DIAS sem atividade suficiente — não após um dia.
-# Por isso 1x/dia basta, e não de 6 em 6 horas: o GitHub cobra no mínimo 1
-# minuto por job, então 4x/dia custava ~120 min/mês para a mesma garantia.
-#
-# ⚠️ HISTÓRICO (31/08/2026): este workflow rodou 89 vezes VERDE sem tocar o
-# banco uma única vez. Ele chamava `SUPABASE_URL/products`, que devolvia
-# 404 "requested path is invalid" — o caminho do PostgREST é
-# /rest/v1/<tabela> e exige o header `apikey`. O projeto recebeu aviso de
-# pausa por inatividade mesmo com o ping "funcionando".
-#
-# Nada acusou porque a versão anterior foi escrita para NÃO falhar: o passo
-# final imprimia "✅ Ping conclude with successfully!" independentemente do
-# status HTTP. Verde por silêncio.
-#
-# Daí as duas regras abaixo:
-#   1. bater numa TABELA (o que gera consulta ao banco), não num health check;
-#   2. FALHAR quando falhar — senão o próximo defeito também fica invisível.
-
 on:
   schedule:
-    # Segunda e quinta, 09:13 UTC. Folga máxima de 4 dias contra a pausa de 7
-    # — 3 dias de margem. Projeto de portfólio: o ping existe só para o banco
-    # não pausar, não para simular tráfego.
-    #
-    # NÃO "a cada 5 dias": `*/5` no dia-do-mês reinicia no dia 1, então do 26
-    # ao 1º seguinte são 6 dias, e o agendador do GitHub é best-effort (dois
-    # atrasos medidos em 30/08: 5h06 e 2h42). Dia-da-semana não tem virada.
-    #
-    # Minuto fora do :00 de propósito: as marcas redondas concentram a fila.
-    # Four real database reads/day; Free plan pausing is not a resettable timer.
-    - cron: '41 3,9,15,21 * * *'
+    # Todos os dias da semana, às 4:43 e 22:43 UTC.
+    - cron: '43 4,22 * * *'
   workflow_dispatch:
 
 jobs:

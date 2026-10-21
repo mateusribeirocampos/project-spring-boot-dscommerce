@@ -19,6 +19,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -175,7 +176,7 @@ public class ProductControllerTests {
 
     @Test
     public void insertShouldReturnUnprocessableEntityWhenPriceIsNegative() throws Exception {
-        productDTO.setPrice(-1250.0);
+        productDTO.setPrice(new BigDecimal("-1250.0"));
         String jsonBody = objectMapper.writeValueAsString(productDTO);
 
         ResultActions result =

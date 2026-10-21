@@ -4,6 +4,7 @@ import com.dscommerce.entities.Order;
 import com.dscommerce.entities.enums.OrderStatus;
 
 import java.time.Instant;
+import java.math.BigDecimal;
 
 public class OrderSummaryDTO {
 
@@ -11,12 +12,12 @@ public class OrderSummaryDTO {
     private Instant moment;
     private OrderStatus orderStatus;
     private String clientName;
-    private Double total;
+    private BigDecimal total;
 
     public OrderSummaryDTO() {
     }
 
-    public OrderSummaryDTO(Long id, Instant moment, OrderStatus orderStatus, String clientName, Double total) {
+    public OrderSummaryDTO(Long id, Instant moment, OrderStatus orderStatus, String clientName, BigDecimal total) {
         this.id = id;
         this.moment = moment;
         this.orderStatus = orderStatus;
@@ -30,8 +31,8 @@ public class OrderSummaryDTO {
         orderStatus = entity.getStatus();
         clientName = entity.getClient().getName();
         total = entity.getItems().stream()
-                .mapToDouble(i -> i.getPrice() * i.getQuantity())
-                .sum();
+                .map(i -> i.getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public Long getId() {
@@ -66,11 +67,11 @@ public class OrderSummaryDTO {
         this.clientName = clientName;
     }
 
-    public Double getTotal() {
+    public BigDecimal getTotal() {
         return total;
     }
 
-    public void setTotal(Double total) {
+    public void setTotal(BigDecimal total) {
         this.total = total;
     }
 }

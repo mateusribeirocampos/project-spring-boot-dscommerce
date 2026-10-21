@@ -1,17 +1,18 @@
 package com.dscommerce.dto;
 
 import com.dscommerce.entities.Product;
+import java.math.BigDecimal;
 
 public class ProductMinDTO {
 
     private Long id;
     private String name;
-    private Double price;
+    private BigDecimal price;
     private String imgUrl;
 
     public ProductMinDTO() {}
 
-    public ProductMinDTO(Long id, String name, Double price, String imgUrl) {
+    public ProductMinDTO(Long id, String name, BigDecimal price, String imgUrl) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -33,7 +34,7 @@ public class ProductMinDTO {
         return name;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
