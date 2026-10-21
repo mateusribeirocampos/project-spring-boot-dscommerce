@@ -31,7 +31,8 @@ on:
     # atrasos medidos em 30/08: 5h06 e 2h42). Dia-da-semana não tem virada.
     #
     # Minuto fora do :00 de propósito: as marcas redondas concentram a fila.
-    - cron: '13 9 * * 1,4'
+    # Four real database reads/day; Free plan pausing is not a resettable timer.
+    - cron: '41 3,9,15,21 * * *'
   workflow_dispatch:
 
 jobs:
