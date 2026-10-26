@@ -15,7 +15,7 @@
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI/CD-2088FF?logo=githubactions&logoColor=white)
 ![Resend](https://img.shields.io/badge/Resend-Email_API-black?logo=resend&logoColor=white)
 ![Flyway](https://img.shields.io/badge/Flyway-Migrations-CC0000?logo=flyway&logoColor=white)
-![JaCoCo](https://img.shields.io/badge/JaCoCo-Coverage-brightgreen?logoColor=white)
+[![codecov](https://codecov.io/github/mateusribeirocampos/project-spring-boot-dscommerce/graph/badge.svg?token=LLUZO9E8MX)](https://codecov.io/github/mateusribeirocampos/project-spring-boot-dscommerce)
 ![Docker](https://img.shields.io/badge/Docker-Container-2496ED?logo=docker&logoColor=white)
 ![Actuator](https://img.shields.io/badge/Actuator-Health_Checks-6DB33F?logo=springboot&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger-OpenAPI_3-85EA2D?logo=swagger&logoColor=black)
@@ -66,7 +66,7 @@ The project emphasizes:
 - PostgreSQL in production
 - Flyway-managed versioned database migrations
 - BCrypt password hashing (work factor 12)
-- Code coverage enforcement with JaCoCo (minimum 40% line coverage gate)
+- Code coverage enforcement with JaCoCo (minimum 75% line coverage gate), reported automatically to Codecov on every CI run
 - Deployed API running on Render
 - Separate frontend client consuming the backend API
 - Interactive API documentation with Swagger UI (springdoc-openapi 2.7.0), including OAuth2 token generation directly from the browser
@@ -322,7 +322,7 @@ Main testing tools used in the project include:
 - Spring Boot Test
 - MockMvc
 - Spring Security Test
-- JaCoCo — code coverage reports generated on every build, with a minimum 40% line coverage gate enforced via `mvn verify`
+- JaCoCo — code coverage reports generated on every build, with a minimum 75% line coverage gate enforced via `mvn verify`; the badge above is updated automatically by Codecov on every push to `main`
 
 Use `./mvnw test` for the fast unit/controller slice suite. Use `./mvnw verify` before publishing changes; this also runs `*IT` integration tests through Failsafe and enforces the JaCoCo coverage gate.
 
